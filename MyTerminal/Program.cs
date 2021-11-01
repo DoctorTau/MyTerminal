@@ -1,5 +1,6 @@
 ﻿using System;
 using ClassTerminal;
+using System.IO;
 namespace MyTerminal
 {
     class Program
@@ -7,9 +8,7 @@ namespace MyTerminal
         static void Main(string[] args)
         {
             // string input = Console.ReadLine();
-            Terminal terminal = new Terminal("C:\\Users\\drtta\\Documents\\infa");
-            Console.WriteLine();
-            terminal.CreateFile("test.txt");
+            Terminal terminal = new Terminal("C:\\");
         }
     }
 }

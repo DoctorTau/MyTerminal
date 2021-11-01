@@ -10,8 +10,9 @@ namespace ClassTerminal
     public class Terminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
-        FileInfo bufferFile = null;
-        bool isCut = false;
+        bool isDirectory = true; //Checks if cur pos is in Drives.
+        FileInfo bufferFile = null; //Buffer file for coping.
+        bool isCut = false; // Type of coping: copy or cut.
 
         /// <summary>
         /// Constructor for Terminal which sets starting directory. 
@@ -20,6 +21,14 @@ namespace ClassTerminal
         public Terminal(string path)
         {
             currentDirectory = new DirectoryInfo(path: path);
+        }
+
+        /// <summary>
+        /// Gives user an information about his current working directory. 
+        /// </summary>
+        public void GetCurrentDirectory()
+        {
+            Console.WriteLine(this.currentDirectory.FullName);
         }
 
         /// <summary>
@@ -36,7 +45,7 @@ namespace ClassTerminal
                 }
                 catch (System.UnauthorizedAccessException)
                 {
-                    Console.Write("└───[Access error]\n");
+                    Console.Write("[Access error]\n");
                 }
 
             }
@@ -64,16 +73,28 @@ namespace ClassTerminal
         {
             if (dirName == "..")
             {
+                // Check if user go up to drives.
+                foreach (var driveInfo in DriveInfo.GetDrives())
+                {
+                    if (this.currentDirectory.Name == driveInfo.Name)
+                    {
+                        this.isDirectory = false;
+                        return;
+                    }
+                }
                 this.currentDirectory = this.currentDirectory.Parent;
                 return;
             }
-            foreach (var dirInfo in currentDirectory.GetDirectories())
+            //Go to drive.
+            if (!this.isDirectory)
             {
-                if (dirInfo.Name == dirName)
-                {
-                    this.currentDirectory = new DirectoryInfo(path: dirInfo.FullName);
-                    return;
-                }
+                this.currentDirectory = new DirectoryInfo(path: dirName);
+                return;
+            }
+            DirectoryInfo dir = new DirectoryInfo(this.currentDirectory.FullName + dirName);
+            if (dir.Exists)
+            {
+                this.currentDirectory = dir;
             }
             Console.WriteLine("There is no such directory");
         }
@@ -81,9 +102,9 @@ namespace ClassTerminal
         /// <summary>
         /// Prints text file to console. Can use 3 different Encodings: UTF-8, ASCII and Unicode. 
         /// </summary>
-        /// <param name="file">Name of printing file.</param>
+        /// <param name="filename">Name of printing file.</param>
         /// <param name="encoding">Choosed encoding, default is UTF-8.</param>
-        public void OpenTextFile(string file, string encoding = "UTF-8")
+        public void OpenTextFile(string filename, string encoding = "UTF-8")
         {
             Encoding encode;
             switch (encoding)
@@ -101,13 +122,11 @@ namespace ClassTerminal
                     Console.WriteLine("Incorrect encoding");
                     return;
             }
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (file == fileInfo.Name)
-                {
-                    Console.WriteLine(File.ReadAllText(fileInfo.FullName), encode);
-                    return;
-                }
+                Console.WriteLine(File.ReadAllText(fileInfo.FullName), encode);
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -118,14 +137,12 @@ namespace ClassTerminal
         /// <param name="filename">Name of coping file.</param>
         public void CopyFile(string filename)
         {
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (fileInfo.Name == filename)
-                {
-                    this.bufferFile = fileInfo;
-                    Console.WriteLine("File copied");
-                    return;
-                }
+                this.bufferFile = fileInfo;
+                Console.WriteLine("File copied");
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -136,15 +153,13 @@ namespace ClassTerminal
         /// <param name="filename">Name of cutting file.</param>
         public void CutFile(string filename)
         {
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (fileInfo.Name == filename)
-                {
-                    this.bufferFile = fileInfo;
-                    this.isCut = true;
-                    Console.WriteLine("File copied");
-                    return;
-                }
+                this.bufferFile = fileInfo;
+                Console.WriteLine("File copied");
+                this.isCut = true;
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -180,14 +195,12 @@ namespace ClassTerminal
         /// <param name="filename">Name of the deliting file.</param>
         public void DeleteFile(string filename)
         {
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (fileInfo.Name == filename)
-                {
-                    fileInfo.Delete();
-                    Console.WriteLine("File deleted");
-                    return;
-                }
+                fileInfo.Delete();
+                Console.WriteLine("File deleted");
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -224,6 +237,24 @@ namespace ClassTerminal
             File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory + "\\" + filename);
             Console.WriteLine("File successfully created.");
 
+        }
+
+        /// <summary>
+        /// Gets 2 filenames and print concated files.
+        /// </summary>
+        /// <param name="firstFileName">First file name.</param>
+        /// <param name="secondFileName">Second file name.</param>
+        public void Concat(string firstFileName, string secondFileName)
+        {
+            FileInfo fileInfo1 = new FileInfo(this.currentDirectory.FullName + "\\" + firstFileName);
+            FileInfo fileInfo2 = new FileInfo(this.currentDirectory.FullName + "\\" + secondFileName);
+            if (fileInfo1.Exists && fileInfo2.Exists)
+            {
+                this.OpenTextFile(firstFileName);
+                this.OpenTextFile(secondFileName);
+                return;
+            }
+            Console.WriteLine("Incorrect filename");
         }
 
     }
