@@ -6,10 +6,10 @@ namespace MyTerminal
     {
         static void Main(string[] args)
         {
-            string input = Console.ReadLine();
-            Terminal terminal = new Terminal("C:\\Users\\drtta\\Documents");
+            // string input = Console.ReadLine();
+            Terminal terminal = new Terminal("C:\\Users\\drtta\\Documents\\infa");
             Console.WriteLine();
-            terminal.OpenTextFile("opennings.txt", "ASCII");
+            terminal.CreateFile("test.txt");
         }
     }
 }

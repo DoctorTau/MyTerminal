@@ -5,7 +5,7 @@ using System.Text;
 namespace ClassTerminal
 {
     /// <summary>
-    /// Class which provides acces to  directories and works with them.
+    /// Class which provides acces to directories and works with them.
     /// </summary>/
     public class Terminal
     {
@@ -59,12 +59,17 @@ namespace ClassTerminal
         /// <summary>
         /// Changes current directory.
         /// </summary>
-        /// <param name="fileName">Name of new directory.</param>
-        public void ChangeDirectory(string fileName)
+        /// <param name="dirName">Name of new directory.</param>
+        public void ChangeDirectory(string dirName)
         {
+            if (dirName == "..")
+            {
+                this.currentDirectory = this.currentDirectory.Parent;
+                return;
+            }
             foreach (var dirInfo in currentDirectory.GetDirectories())
             {
-                if (dirInfo.Name == fileName)
+                if (dirInfo.Name == dirName)
                 {
                     this.currentDirectory = new DirectoryInfo(path: dirInfo.FullName);
                     return;
@@ -159,8 +164,9 @@ namespace ClassTerminal
                 }
                 else
                 {
-                    this.bufferFile.CopyTo(this.currentDirectory.FullName);
+                    this.bufferFile.CopyTo(this.currentDirectory.FullName + "\\" + this.bufferFile.Name, true);
                 }
+                Console.WriteLine("File pasted");
             }
             else
             {
@@ -184,6 +190,40 @@ namespace ClassTerminal
                 }
             }
             Console.WriteLine("Incorrect filename");
+        }
+
+        /// <summary>
+        /// Create text file and write some text there. User can choose one of the 3 encodings: UTF-8, ASCII, Unicode.
+        /// </summary>
+        /// <param name="filename">Name of creating file.</param>
+        /// <param name="encoding">Choosed encoding.</param>
+        public void CreateFile(string filename, string encoding = "UTF-8")
+        {
+            Encoding encode;
+            switch (encoding)
+            {
+                case "UTF-8":
+                    encode = Encoding.UTF8;
+                    break;
+                case "ASCII":
+                    encode = Encoding.ASCII;
+                    break;
+                case "Unicode":
+                    encode = Encoding.Unicode;
+                    break;
+                default:
+                    Console.WriteLine("Incorrect encoding");
+                    return;
+            }
+            Console.WriteLine("Enter your text:");
+            string text = Console.ReadLine();
+            using (StreamWriter sw = new StreamWriter(File.Open(filename, FileMode.Create), encode))
+            {
+                sw.Write(text);
+            }
+            File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory + "\\" + filename);
+            Console.WriteLine("File successfully created.");
+
         }
 
     }
