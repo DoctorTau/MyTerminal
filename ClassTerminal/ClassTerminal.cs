@@ -6,7 +6,7 @@ namespace ClassTerminal
     /// <summary>
     /// Class which provides acces to  directories and works with them
     /// </summary>/
-    class Terminal
+    public class Terminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
 
@@ -61,7 +61,7 @@ namespace ClassTerminal
             {
                 if (dirInfo.Name == fileName)
                 {
-                    this.currentDirectory = new DirectoryInfo(path: fileName);
+                    this.currentDirectory = new DirectoryInfo(path: dirInfo.FullName);
                     return;
                 }
             }

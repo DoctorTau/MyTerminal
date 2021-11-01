@@ -10,6 +10,7 @@ namespace MyTerminal
             Terminal terminal = new Terminal("C:\\");
             terminal.PrintElements();
             terminal.ChangeDirectory("games");
+            Console.WriteLine();
             terminal.PrintElements();
         }
     }
