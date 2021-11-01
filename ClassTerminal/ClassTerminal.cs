@@ -81,9 +81,9 @@ namespace ClassTerminal
         /// <summary>
         /// Prints text file to console. Can use 3 different Encodings: UTF-8, ASCII and Unicode. 
         /// </summary>
-        /// <param name="file">Name of printing file.</param>
+        /// <param name="filename">Name of printing file.</param>
         /// <param name="encoding">Choosed encoding, default is UTF-8.</param>
-        public void OpenTextFile(string file, string encoding = "UTF-8")
+        public void OpenTextFile(string filename, string encoding = "UTF-8")
         {
             Encoding encode;
             switch (encoding)
@@ -101,13 +101,11 @@ namespace ClassTerminal
                     Console.WriteLine("Incorrect encoding");
                     return;
             }
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (file == fileInfo.Name)
-                {
-                    Console.WriteLine(File.ReadAllText(fileInfo.FullName), encode);
-                    return;
-                }
+                Console.WriteLine(File.ReadAllText(fileInfo.FullName), encode);
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -118,14 +116,12 @@ namespace ClassTerminal
         /// <param name="filename">Name of coping file.</param>
         public void CopyFile(string filename)
         {
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (fileInfo.Name == filename)
-                {
-                    this.bufferFile = fileInfo;
-                    Console.WriteLine("File copied");
-                    return;
-                }
+                this.bufferFile = fileInfo;
+                Console.WriteLine("File copied");
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -136,15 +132,13 @@ namespace ClassTerminal
         /// <param name="filename">Name of cutting file.</param>
         public void CutFile(string filename)
         {
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (fileInfo.Name == filename)
-                {
-                    this.bufferFile = fileInfo;
-                    this.isCut = true;
-                    Console.WriteLine("File copied");
-                    return;
-                }
+                this.bufferFile = fileInfo;
+                Console.WriteLine("File copied");
+                this.isCut = true;
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -180,14 +174,12 @@ namespace ClassTerminal
         /// <param name="filename">Name of the deliting file.</param>
         public void DeleteFile(string filename)
         {
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            if (fileInfo.Exists)
             {
-                if (fileInfo.Name == filename)
-                {
-                    fileInfo.Delete();
-                    Console.WriteLine("File deleted");
-                    return;
-                }
+                fileInfo.Delete();
+                Console.WriteLine("File deleted");
+                return;
             }
             Console.WriteLine("Incorrect filename");
         }
@@ -224,6 +216,12 @@ namespace ClassTerminal
             File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory + "\\" + filename);
             Console.WriteLine("File successfully created.");
 
+        }
+
+        public void Concat(string firstFileName, string secondFileName)
+        {
+            this.OpenTextFile(firstFileName);
+            this.OpenTextFile(secondFileName);
         }
 
     }

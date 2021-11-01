@@ -9,7 +9,7 @@ namespace MyTerminal
             // string input = Console.ReadLine();
             Terminal terminal = new Terminal("C:\\Users\\drtta\\Documents\\infa");
             Console.WriteLine();
-            terminal.CreateFile("test.txt");
+            terminal.Concat("test copy.txt", "test.txt");
         }
     }
 }
