@@ -239,6 +239,7 @@ namespace ClassTerminal
 
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Gets 2 filenames and print concated files.
         /// </summary>
@@ -255,6 +256,12 @@ namespace ClassTerminal
                 return;
             }
             Console.WriteLine("Incorrect filename");
+=======
+        public void Concat(string firstFileName, string secondFileName)
+        {
+            this.OpenTextFile(firstFileName);
+            this.OpenTextFile(secondFileName);
+>>>>>>> b6238f4cf241dec06e0d2534aee8e04977b5c305
         }
 
     }
