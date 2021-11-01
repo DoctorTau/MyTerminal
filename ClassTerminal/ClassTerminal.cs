@@ -168,5 +168,23 @@ namespace ClassTerminal
             }
         }
 
+        /// <summary>
+        /// Delete file by filename. 
+        /// </summary>
+        /// <param name="filename">Name of the deliting file.</param>
+        public void DeleteFile(string filename)
+        {
+            foreach (var fileInfo in currentDirectory.GetFiles())
+            {
+                if (fileInfo.Name == filename)
+                {
+                    fileInfo.Delete();
+                    Console.WriteLine("File deleted");
+                    return;
+                }
+            }
+            Console.WriteLine("Incorrect filename");
+        }
+
     }
 }
