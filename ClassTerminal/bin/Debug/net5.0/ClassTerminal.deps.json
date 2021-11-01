@@ -6,14 +6,6 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v5.0": {
-      "MyTerminal/1.0.0": {
-        "dependencies": {
-          "ClassTerminal": "1.0.0"
-        },
-        "runtime": {
-          "MyTerminal.dll": {}
-        }
-      },
       "ClassTerminal/1.0.0": {
         "runtime": {
           "ClassTerminal.dll": {}
@@ -22,11 +14,6 @@
     }
   },
   "libraries": {
-    "MyTerminal/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
     "ClassTerminal/1.0.0": {
       "type": "project",
       "serviceable": false,

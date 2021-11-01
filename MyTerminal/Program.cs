@@ -1,12 +1,16 @@
 ﻿using System;
-
+using ClassTerminal;
 namespace MyTerminal
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            string input = Console.ReadLine();
+            Terminal terminal = new Terminal("C:\\");
+            terminal.PrintElements();
+            terminal.ChangeDirectory("games");
+            terminal.PrintElements();
         }
     }
 }

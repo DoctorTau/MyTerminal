@@ -14,3 +14,5 @@ C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\MyTerminal\obj\De
 C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\MyTerminal\obj\Debug\net5.0\ref\MyTerminal.dll
 C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\MyTerminal\obj\Debug\net5.0\MyTerminal.pdb
 C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\MyTerminal\obj\Debug\net5.0\MyTerminal.genruntimeconfig.cache
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\MyTerminal\bin\Debug\net5.0\ClassTerminal.dll
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\MyTerminal\bin\Debug\net5.0\ClassTerminal.pdb

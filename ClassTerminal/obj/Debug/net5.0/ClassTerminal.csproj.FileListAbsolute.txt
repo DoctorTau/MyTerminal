@@ -1,0 +1,12 @@
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\bin\Debug\net5.0\ClassTerminal.deps.json
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\bin\Debug\net5.0\ClassTerminal.dll
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\bin\Debug\net5.0\ref\ClassTerminal.dll
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\bin\Debug\net5.0\ClassTerminal.pdb
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.csproj.AssemblyReference.cache
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.AssemblyInfoInputs.cache
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.AssemblyInfo.cs
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.csproj.CoreCompileInputs.cache
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.dll
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ref\ClassTerminal.dll
+C:\Users\drtta\Google Диск\programming\HSE\C#\TerminalPeer\ClassTerminal\obj\Debug\net5.0\ClassTerminal.pdb
