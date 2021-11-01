@@ -10,6 +10,8 @@ namespace ClassTerminal
     public class Terminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
+        FileInfo bufferFile = null;
+        bool isCut = false;
 
         /// <summary>
         /// Constructor for Terminal which sets starting directory. 
@@ -104,5 +106,67 @@ namespace ClassTerminal
             }
             Console.WriteLine("Incorrect filename");
         }
+
+        /// <summary>
+        /// Add file to the file buffer. 
+        /// </summary>
+        /// <param name="filename">Name of coping file.</param>
+        public void CopyFile(string filename)
+        {
+            foreach (var fileInfo in currentDirectory.GetFiles())
+            {
+                if (fileInfo.Name == filename)
+                {
+                    this.bufferFile = fileInfo;
+                    Console.WriteLine("File copied");
+                    return;
+                }
+            }
+            Console.WriteLine("Incorrect filename");
+        }
+
+        /// <summary>
+        /// Add file to the buffer. And turn cut flag on. 
+        /// </summary>
+        /// <param name="filename">Name of cutting file.</param>
+        public void CutFile(string filename)
+        {
+            foreach (var fileInfo in currentDirectory.GetFiles())
+            {
+                if (fileInfo.Name == filename)
+                {
+                    this.bufferFile = fileInfo;
+                    this.isCut = true;
+                    Console.WriteLine("File copied");
+                    return;
+                }
+            }
+            Console.WriteLine("Incorrect filename");
+        }
+
+        /// <summary>
+        /// Paste file from buffert to current directory. 
+        /// </summary>
+        public void PasteFile()
+        {
+            if (this.bufferFile != null)
+            {
+                if (this.isCut)
+                {
+                    this.bufferFile.MoveTo(this.currentDirectory.FullName);
+                    isCut = false;
+                    this.bufferFile = null;
+                }
+                else
+                {
+                    this.bufferFile.CopyTo(this.currentDirectory.FullName);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No file in buffer");
+            }
+        }
+
     }
 }
