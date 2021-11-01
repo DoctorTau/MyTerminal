@@ -7,11 +7,9 @@ namespace MyTerminal
         static void Main(string[] args)
         {
             string input = Console.ReadLine();
-            Terminal terminal = new Terminal("C:\\");
-            terminal.PrintElements();
-            terminal.ChangeDirectory("games");
+            Terminal terminal = new Terminal("C:\\Users\\drtta\\Documents");
             Console.WriteLine();
-            terminal.PrintElements();
+            terminal.OpenTextFile("opennings.txt", "ASCII");
         }
     }
 }
