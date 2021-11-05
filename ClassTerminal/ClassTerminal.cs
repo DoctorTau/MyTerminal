@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace ClassTerminal
 {
@@ -10,9 +11,14 @@ namespace ClassTerminal
     public class Terminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
-        bool isDirectory = true; //Checks if cur pos is in Drives.
-        FileInfo bufferFile = null; //Buffer file for coping.
-        bool isCut = false; // Type of coping: copy or cut.
+        bool isDirectory = true;
+        //Checks if cur pos is in Drives.
+        FileInfo bufferFile = null;
+        //Buffer file for coping.
+        bool isCut = false;
+        // Type of coping: copy or cut.
+        List<string> encodings = new List<string>(new string[] { "UTF-8", "ASCII", "Unicode" });
+        // Encodings that can be use in the terminal.
 
         /// <summary>
         /// Constructor for Terminal which sets starting directory. 
@@ -26,15 +32,41 @@ namespace ClassTerminal
         /// <summary>
         /// Gives user an information about his current working directory. 
         /// </summary>
-        public void GetCurrentDirectory()
+        public string GetCurrentDirectory()
         {
-            Console.WriteLine(this.currentDirectory.FullName);
+            if (this.isDirectory)
+            {
+                return (this.currentDirectory.FullName);
+            }
+            else
+            {
+                return ("Your Computer.");
+            }
+        }
+
+        /// <summary>
+        /// Prints information about commands for user.  
+        /// </summary>
+        public void PrintComandsInfo()
+        {
+            Console.WriteLine("There are some commands for this terminal:\n");
+            Console.WriteLine("gd - prints you current directory\n");
+            Console.WriteLine("cd {dirname} - changes your working directory to one of ypur current directory\nWrite '..' to go up\n");
+            Console.WriteLine("ls - prints you list of file and dirrectories in your current directory\n");
+            Console.WriteLine("open {file} {encode} - opens file in your encode. Defaulten code - UTF-8\n");
+            Console.WriteLine("copy {file} - adds file to the buffer.\n");
+            Console.WriteLine("cut {file} - adds file to the buffer and  deletes it after pasting.\n");
+            Console.WriteLine("paste - paste file from the buffer. If type was cutting that file would stay in the buffer, otherwise buffer would be cleaned.\n");
+            Console.WriteLine("delete {file} - delete a file in current directory.\n");
+            Console.WriteLine("create {file} {encode} - creates a new file in choosed encode.  Default encoding is UTF-8.\n");
+            Console.WriteLine("concat {file 1} {file 2} - concats 2 files into 1 and print it to the console.\n");
+            Console.WriteLine("clear - clears the console.\n");
         }
 
         /// <summary>
         /// Prints  elements of current directory.
         /// </summary>
-        public void PrintElements()
+        private void PrintElements()
         {
             // Prints directories
             foreach (var dirInfo in currentDirectory.GetDirectories())
@@ -66,6 +98,32 @@ namespace ClassTerminal
         }
 
         /// <summary>
+        /// Prints list of drives. 
+        /// </summary>
+        private void PrintDrives()
+        {
+            foreach (var driveInfo in DriveInfo.GetDrives())
+            {
+                Console.WriteLine("[" + driveInfo.Name + "]");
+            }
+        }
+
+        /// <summary>
+        /// Checks is directory is Drive
+        /// </summary>
+        /// <param name="drive">Name of directory to check.</param>
+        /// <returns>True if is drive, false otherwise.</returns>
+        private bool CheckIsDrive(string drive)
+        {
+            foreach (var driveInfo in DriveInfo.GetDrives())
+            {
+                if (drive == driveInfo.Name)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Changes current directory.
         /// </summary>
         /// <param name="dirName">Name of new directory.</param>
@@ -74,13 +132,10 @@ namespace ClassTerminal
             if (dirName == "..")
             {
                 // Check if user go up to drives.
-                foreach (var driveInfo in DriveInfo.GetDrives())
+                if (CheckIsDrive(this.currentDirectory.FullName))
                 {
-                    if (this.currentDirectory.Name == driveInfo.Name)
-                    {
-                        this.isDirectory = false;
-                        return;
-                    }
+                    this.isDirectory = false;
+                    return;
                 }
                 this.currentDirectory = this.currentDirectory.Parent;
                 return;
@@ -88,15 +143,48 @@ namespace ClassTerminal
             //Go to drive.
             if (!this.isDirectory)
             {
-                this.currentDirectory = new DirectoryInfo(path: dirName);
+                if (CheckIsDrive(dirName))
+                {
+                    this.currentDirectory = new DirectoryInfo(path: dirName);
+                    return;
+                }
+                Console.WriteLine("Incorect drive name.");
                 return;
             }
             DirectoryInfo dir = new DirectoryInfo(this.currentDirectory.FullName + dirName);
             if (dir.Exists)
             {
                 this.currentDirectory = dir;
+                return;
             }
             Console.WriteLine("There is no such directory");
+        }
+
+        /// <summary>
+        /// Prints list of element if it is a directory, otherwise prints list of drives. 
+        /// </summary>
+        public void ListOfElements()
+        {
+            if (this.isDirectory)
+            {
+                PrintElements();
+                return;
+            }
+            PrintDrives();
+        }
+
+        /// <summary>
+        /// Check is inputed encodeing correct. 
+        /// </summary>
+        /// <param name="encoding">Inputed encodeing.</param>
+        /// <returns>True if input is correct, false otherwise.</returns>
+        public bool CheckEncoding(string encoding)
+        {
+            if (this.encodings.Find(findEl => findEl == encoding) != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -122,7 +210,7 @@ namespace ClassTerminal
                     Console.WriteLine("Incorrect encoding");
                     return;
             }
-            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
+            FileInfo fileInfo = new FileInfo(this.currentDirectory.FullName + "\\" + filename);
             if (fileInfo.Exists)
             {
                 Console.WriteLine(File.ReadAllText(fileInfo.FullName), encode);
@@ -205,12 +293,21 @@ namespace ClassTerminal
             Console.WriteLine("Incorrect filename");
         }
 
+        public bool AskYesNo()
+        {
+            Console.WriteLine("Are you sure? (y/n)");
+            string answer = Console.ReadLine();
+            if (answer == "y")
+                return true;
+            return false;
+        }
+
         /// <summary>
         /// Create text file and write some text there. User can choose one of the 3 encodings: UTF-8, ASCII, Unicode.
         /// </summary>
         /// <param name="filename">Name of creating file.</param>
         /// <param name="encoding">Choosed encoding.</param>
-        public void CreateFile(string filename, string encoding = "UTF-8")
+        public void CreateTextFile(string filename, string encoding = "UTF-8")
         {
             Encoding encode;
             switch (encoding)
@@ -234,12 +331,11 @@ namespace ClassTerminal
             {
                 sw.Write(text);
             }
-            File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory + "\\" + filename);
+            File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory.FullName + "\\" + filename);
             Console.WriteLine("File successfully created.");
 
         }
 
-<<<<<<< HEAD
         /// <summary>
         /// Gets 2 filenames and print concated files.
         /// </summary>
@@ -256,12 +352,6 @@ namespace ClassTerminal
                 return;
             }
             Console.WriteLine("Incorrect filename");
-=======
-        public void Concat(string firstFileName, string secondFileName)
-        {
-            this.OpenTextFile(firstFileName);
-            this.OpenTextFile(secondFileName);
->>>>>>> b6238f4cf241dec06e0d2534aee8e04977b5c305
         }
 
     }
