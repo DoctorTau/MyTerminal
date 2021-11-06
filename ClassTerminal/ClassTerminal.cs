@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Security;
 
 namespace ClassTerminal
 {
@@ -347,6 +348,36 @@ namespace ClassTerminal
                 return;
             }
             PrintError("Incorrect filenames");
+        }
+
+        /// <summary>
+        /// Prints file by mask. 
+        /// </summary>
+        /// <param name="pattern">File mask.</param>
+        public void GetMaskedFiles(string pattern)
+        {
+            string elements = "";
+            try
+            {
+                foreach (var fileInfo in this.currentDirectory.GetFiles(pattern))
+                {
+
+                    elements += $"{fileInfo.Name} ({fileInfo.Length / 8}B)\n";
+                }
+                PrintListOfFiles(elements);
+            }
+            catch (Exception e)
+            {
+                switch (e)
+                {
+                    case SecurityException:
+                        PrintError("Acces Error");
+                        break;
+                    case ArgumentException:
+                        PrintError("Wrong search pattern");
+                        break;
+                }
+            }
         }
 
     }

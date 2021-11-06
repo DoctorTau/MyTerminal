@@ -108,9 +108,20 @@ namespace MyTerminal
                         break;
                     case "concat":
                         if (inputComands.Count != 2)
+                        {
                             terminal.PrintError("Invalid files");
+                            break;
+                        }
                         Console.WriteLine(inputComands[0], inputComands[1]);
                         terminal.Concat(inputComands[0], inputComands[1]);
+                        break;
+                    case "filesBy":
+                        if (inputComands.Count != 1)
+                        {
+                            terminal.PrintError("Ivalid mask");
+                            break;
+                        }
+                        terminal.GetMaskedFiles(inputComands[0]);
                         break;
                     default:
                         terminal.PrintError("Unkcown command!");
