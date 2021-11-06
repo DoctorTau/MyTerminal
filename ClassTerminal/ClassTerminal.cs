@@ -8,7 +8,7 @@ namespace ClassTerminal
     /// <summary>
     /// Class which provides acces to directories and works with them.
     /// </summary>/
-    public class Terminal
+    public partial class Terminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
         bool isDirectory = true;
@@ -45,39 +45,21 @@ namespace ClassTerminal
         }
 
         /// <summary>
-        /// Prints information about commands for user.  
-        /// </summary>
-        public void PrintComandsInfo()
-        {
-            Console.WriteLine("There are some commands for this terminal:\n");
-            Console.WriteLine("gd - prints you current directory\n");
-            Console.WriteLine("cd {dirname} - changes your working directory to one of ypur current directory\nWrite '..' to go up\n");
-            Console.WriteLine("ls - prints you list of file and dirrectories in your current directory\n");
-            Console.WriteLine("open {file} {encode} - opens file in your encode. Defaulten code - UTF-8\n");
-            Console.WriteLine("copy {file} - adds file to the buffer.\n");
-            Console.WriteLine("cut {file} - adds file to the buffer and  deletes it after pasting.\n");
-            Console.WriteLine("paste - paste file from the buffer. If type was cutting that file would stay in the buffer, otherwise buffer would be cleaned.\n");
-            Console.WriteLine("delete {file} - delete a file in current directory.\n");
-            Console.WriteLine("create {file} {encode} - creates a new file in choosed encode.  Default encoding is UTF-8.\n");
-            Console.WriteLine("concat {file 1} {file 2} - concats 2 files into 1 and print it to the console.\n");
-            Console.WriteLine("clear - clears the console.\n");
-        }
-
-        /// <summary>
         /// Prints  elements of current directory.
         /// </summary>
         private void PrintElements()
         {
+            string elements = "";
             // Prints directories
             foreach (var dirInfo in currentDirectory.GetDirectories())
             {
                 try
                 {
-                    Console.Write("[" + dirInfo.Name + "]" + "\n");
+                    elements += $"[{dirInfo.Name}]\n";
                 }
                 catch (System.UnauthorizedAccessException)
                 {
-                    Console.Write("[Access error]\n");
+                    elements += "[Acces error]\n";
                 }
 
             }
@@ -87,14 +69,16 @@ namespace ClassTerminal
             {
                 try
                 {
-                    Console.Write(fileInfo.Name + " (" + (fileInfo.Length / 8) + " B)" + "\n");
+                    elements += $"{fileInfo.Name} ({fileInfo.Length / 8}B)\n";
                 }
                 catch (IOException)
                 {
-                    Console.Write("{File access error}\n");
+                    elements += "File access error\n";
                 }
 
             }
+
+            PrintListOfFiles(elements);
         }
 
         /// <summary>
@@ -102,10 +86,12 @@ namespace ClassTerminal
         /// </summary>
         private void PrintDrives()
         {
+            string drives = "";
             foreach (var driveInfo in DriveInfo.GetDrives())
             {
-                Console.WriteLine("[" + driveInfo.Name + "]");
+                drives += $"[{driveInfo.Name}]\n";
             }
+            PrintListOfFiles(drives);
         }
 
         /// <summary>
@@ -148,8 +134,17 @@ namespace ClassTerminal
                     this.currentDirectory = new DirectoryInfo(path: dirName);
                     return;
                 }
-                Console.WriteLine("Incorect drive name.");
+                PrintError("Incorect drive name.");
                 return;
+            }
+            if (Path.IsPathRooted(dirName))
+            {
+                DirectoryInfo absPath = new DirectoryInfo(path: dirName);
+                if (absPath.Exists)
+                {
+                    this.currentDirectory = absPath;
+                    return;
+                }
             }
             DirectoryInfo dir = new DirectoryInfo(this.currentDirectory.FullName + dirName);
             if (dir.Exists)
@@ -157,7 +152,7 @@ namespace ClassTerminal
                 this.currentDirectory = dir;
                 return;
             }
-            Console.WriteLine("There is no such directory");
+            PrintError("There is no such directory");
         }
 
         /// <summary>
@@ -207,7 +202,7 @@ namespace ClassTerminal
                     encode = Encoding.Unicode;
                     break;
                 default:
-                    Console.WriteLine("Incorrect encoding");
+                    PrintError("Incorrect encoding");
                     return;
             }
             FileInfo fileInfo = new FileInfo(this.currentDirectory.FullName + "\\" + filename);
@@ -216,7 +211,7 @@ namespace ClassTerminal
                 Console.WriteLine(File.ReadAllText(fileInfo.FullName), encode);
                 return;
             }
-            Console.WriteLine("Incorrect filename");
+            PrintError("Incorrect filename");
         }
 
         /// <summary>
@@ -229,10 +224,10 @@ namespace ClassTerminal
             if (fileInfo.Exists)
             {
                 this.bufferFile = fileInfo;
-                Console.WriteLine("File copied");
+                PrintSuccessMessage("File copied");
                 return;
             }
-            Console.WriteLine("Incorrect filename");
+            PrintError("Incorrect filename");
         }
 
         /// <summary>
@@ -245,11 +240,11 @@ namespace ClassTerminal
             if (fileInfo.Exists)
             {
                 this.bufferFile = fileInfo;
-                Console.WriteLine("File copied");
+                PrintSuccessMessage("File copied");
                 this.isCut = true;
                 return;
             }
-            Console.WriteLine("Incorrect filename");
+            PrintError("Incorrect filename");
         }
 
         /// <summary>
@@ -269,11 +264,11 @@ namespace ClassTerminal
                 {
                     this.bufferFile.CopyTo(this.currentDirectory.FullName + "\\" + this.bufferFile.Name, true);
                 }
-                Console.WriteLine("File pasted");
+                PrintSuccessMessage("File pasted");
             }
             else
             {
-                Console.WriteLine("No file in buffer");
+                PrintError("No file in buffer");
             }
         }
 
@@ -287,10 +282,10 @@ namespace ClassTerminal
             if (fileInfo.Exists)
             {
                 fileInfo.Delete();
-                Console.WriteLine("File deleted");
+                PrintSuccessMessage("File deleted");
                 return;
             }
-            Console.WriteLine("Incorrect filename");
+            PrintError("Incorrect filename");
         }
 
         public bool AskYesNo()
@@ -322,7 +317,7 @@ namespace ClassTerminal
                     encode = Encoding.Unicode;
                     break;
                 default:
-                    Console.WriteLine("Incorrect encoding");
+                    PrintError("Incorrect encoding");
                     return;
             }
             Console.WriteLine("Enter your text:");
@@ -332,7 +327,7 @@ namespace ClassTerminal
                 sw.Write(text);
             }
             File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory.FullName + "\\" + filename);
-            Console.WriteLine("File successfully created.");
+            PrintSuccessMessage("File successfully created.");
 
         }
 
@@ -351,7 +346,7 @@ namespace ClassTerminal
                 this.OpenTextFile(secondFileName);
                 return;
             }
-            Console.WriteLine("Incorrect filename");
+            PrintError("Incorrect filenames");
         }
 
     }

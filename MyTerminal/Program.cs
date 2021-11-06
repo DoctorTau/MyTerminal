@@ -13,21 +13,48 @@ namespace MyTerminal
         public static string ConcatStrings(List<string> inStr)
         {
             string output = "";
+
             foreach (string line in inStr)
             {
                 output += line + " ";
             }
+
             return output.TrimEnd();
+        }
+
+        public static List<string> CutQuotesInString(string inStr)
+        {
+            char[] charsInString = inStr.ToCharArray();
+            bool quoteFlag = false;
+
+            for (int i = 0; i < charsInString.Length; i++)
+            {
+                if (charsInString[i] == '"')
+                {
+                    quoteFlag = !quoteFlag;
+                }
+                if (!quoteFlag && charsInString[i] == ' ')
+                {
+                    charsInString[i] = '|';
+                }
+            }
+
+            List<string> returnsList = new List<string>((new string(charsInString)).Split('|'));
+            for (int i = 0; i < returnsList.Count; i++)
+            {
+                returnsList[i] = returnsList[i].Trim('"');
+            }
+
+            return returnsList;
         }
 
         static void Main(string[] args)
         {
-            // string input = Console.ReadLine();
             Terminal terminal = new Terminal("C:\\");
             string input = Console.ReadLine();
             while (input != "quit")
             {
-                List<string> inputComands = new List<string>(input.Split());
+                List<string> inputComands = CutQuotesInString(input);
                 string command = inputComands[0];
                 string encoding = null;
                 if (inputComands.Count > 1)
@@ -46,7 +73,6 @@ namespace MyTerminal
                         Console.WriteLine(terminal.GetCurrentDirectory());
                         break;
                     case "cd":
-                        Console.WriteLine(ConcatStrings(inputComands) == "..");
                         terminal.ChangeDirectory(ConcatStrings(inputComands));
                         break;
                     case "ls":
@@ -80,11 +106,16 @@ namespace MyTerminal
                         else
                             terminal.CreateTextFile(ConcatStrings(inputComands));
                         break;
+                    case "concat":
+                        if (inputComands.Count != 2)
+                            terminal.PrintError("Invalid files");
+                        Console.WriteLine(inputComands[0], inputComands[1]);
+                        terminal.Concat(inputComands[0], inputComands[1]);
+                        break;
                     default:
-                        Console.WriteLine("Unkcown command!");
+                        terminal.PrintError("Unkcown command!");
                         break;
                 }
-                Console.WriteLine("\n╠═══════════════════════════════════════\n");
                 input = Console.ReadLine();
             }
         }
