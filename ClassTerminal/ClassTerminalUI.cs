@@ -24,6 +24,7 @@ namespace ClassTerminal
             Console.WriteLine("create {file} {encode} - creates a new file in choosed encode.  Default encoding is UTF-8.\n");
             Console.WriteLine("concat \"{file 1}\" \"{file 2}\" - concats 2 files into 1 and print it to the console.\n");
             Console.WriteLine("clear - clears the console.\n");
+            Console.WriteLine("filesBy {*...} - prints file whith your mask.\n");
         }
 
         /// <summary>
@@ -38,6 +39,10 @@ namespace ClassTerminal
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Print one string in blue color.
+        /// </summary>
+        /// <param name="files">String to print.</param>
         public void PrintListOfFiles(string files)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -45,6 +50,10 @@ namespace ClassTerminal
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Print messege in green color. 
+        /// </summary>
+        /// <param name="message">String to print.</param>
         public void PrintSuccessMessage(string message)
         {
             Console.ForegroundColor = ConsoleColor.Green;

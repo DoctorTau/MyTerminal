@@ -22,6 +22,11 @@ namespace MyTerminal
             return output.TrimEnd();
         }
 
+        /// <summary>
+        /// Split string by quotes. 
+        /// </summary>
+        /// <param name="inStr">String to split.</param>
+        /// <returns>List of separated strings.</returns>
         public static List<string> CutQuotesInString(string inStr)
         {
             char[] charsInString = inStr.ToCharArray();
@@ -46,6 +51,11 @@ namespace MyTerminal
             }
 
             return returnsList;
+        }
+
+        public static bool CheckCountOfArgumets(List<string> commands, int countOfArgumets)
+        {
+            return commands.Count == countOfArgumets;
         }
 
         static void Main(string[] args)
@@ -73,7 +83,10 @@ namespace MyTerminal
                         Console.WriteLine(terminal.GetCurrentDirectory());
                         break;
                     case "cd":
-                        terminal.ChangeDirectory(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputComands, 1))
+                            terminal.ChangeDirectory(ConcatStrings(inputComands));
+                        else
+                            terminal.PrintError("Invalid argument");
                         break;
                     case "ls":
                         terminal.ListOfElements();
@@ -82,49 +95,71 @@ namespace MyTerminal
                         Console.Clear();
                         break;
                     case "copy":
-                        terminal.CopyFile(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputComands, 1))
+                            terminal.CopyFile(ConcatStrings(inputComands));
+                        else
+                            terminal.PrintError("Invalid argument");
                         break;
                     case "cut":
-                        terminal.CutFile(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputComands, 1))
+                            terminal.CutFile(ConcatStrings(inputComands));
+                        else
+                            terminal.PrintError("Invalid argument");
                         break;
                     case "paste":
                         terminal.PasteFile();
                         break;
                     case "delete":
-                        if (terminal.AskYesNo())
-                            terminal.DeleteFile(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputComands, 1))
+                        {
+                            if (terminal.AskYesNo())
+                                terminal.DeleteFile(ConcatStrings(inputComands));
+                        }
+                        else
+                            terminal.PrintError("Invalid argument");
                         break;
                     case "open":
-                        if (encoding != null)
-                            terminal.OpenTextFile(ConcatStrings(inputComands), encoding);
+                        if (CheckCountOfArgumets(inputComands, 1))
+                        {
+                            if (encoding != null)
+                                terminal.OpenTextFile(ConcatStrings(inputComands), encoding);
+                            else
+                                terminal.OpenTextFile(ConcatStrings(inputComands));
+                        }
                         else
-                            terminal.OpenTextFile(ConcatStrings(inputComands));
+                            terminal.PrintError("Invalid argument");
                         break;
                     case "create":
-                        if (encoding != null)
-                            terminal.CreateTextFile(ConcatStrings(inputComands), encoding);
+                        if (CheckCountOfArgumets(inputComands, 1))
+                        {
+                            if (encoding != null)
+                                terminal.CreateTextFile(ConcatStrings(inputComands), encoding);
+                            else
+                                terminal.CreateTextFile(ConcatStrings(inputComands));
+                        }
                         else
-                            terminal.CreateTextFile(ConcatStrings(inputComands));
+                            terminal.PrintError("Invalid argument");
                         break;
                     case "concat":
-                        if (inputComands.Count != 2)
+                        if (CheckCountOfArgumets(inputComands, 2))
                         {
-                            terminal.PrintError("Invalid files");
+                            terminal.Concat(inputComands[0], inputComands[1]);
                             break;
                         }
-                        Console.WriteLine(inputComands[0], inputComands[1]);
-                        terminal.Concat(inputComands[0], inputComands[1]);
+                        else
+                            terminal.PrintError("Invalid files");
                         break;
                     case "filesBy":
-                        if (inputComands.Count != 1)
+                        if (CheckCountOfArgumets(inputComands, 1) && inputComands[0][0] == '*')
                         {
-                            terminal.PrintError("Ivalid mask");
+                            terminal.GetMaskedFiles(inputComands[0]);
                             break;
                         }
-                        terminal.GetMaskedFiles(inputComands[0]);
+                        else
+                            terminal.PrintError("Ivalid mask");
                         break;
                     default:
-                        terminal.PrintError("Unkcown command!");
+                        terminal.PrintError("Unkcown command");
                         break;
                 }
                 input = Console.ReadLine();
