@@ -165,8 +165,9 @@ namespace ClassInputCommands
         public static StringBuilder AutoCompleteMethod(StringBuilder sb, Terminal terminal)
         {
             List<string> inputLine = CutQuotesInString(sb.ToString());
+            bool hasQuotes = inputLine[inputLine.Count - 1].Contains(' ') || inputLine[inputLine.Count - 1].Contains('"');
+            inputLine[inputLine.Count - 1] = inputLine[inputLine.Count - 1].Trim('"');
             List<string> matchedLines = SearchForMatches(inputLine, terminal);
-            bool hasQuotes = inputLine[inputLine.Count - 1].Contains(' ');
             if (matchedLines.Count > 1)
             {
                 Console.WriteLine();
@@ -261,7 +262,7 @@ namespace ClassInputCommands
             List<string> returnsList = new List<string>((new string(charsInString)).Split('|'));
             for (int i = 0; i < returnsList.Count; i++)
             {
-                returnsList[i] = returnsList[i].Trim('"');
+                // returnsList[i] = returnsList[i].Trim('"');
             }
 
             return returnsList;

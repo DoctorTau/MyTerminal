@@ -29,6 +29,16 @@ namespace MyTerminal
             return commands.Count == countOfArgumets;
         }
 
+        public static List<string> TrimQuotes(List<string> commands)
+        {
+            for (int i = 0; i < commands.Count; i++)
+            {
+                commands[i] = commands[i].Trim('"');
+            }
+
+            return commands;
+        }
+
         static void Main(string[] args)
         {
             bool workFlag = true;
@@ -36,17 +46,18 @@ namespace MyTerminal
             // string input = Console.ReadLine();
             while (workFlag)
             {
-                List<string> inputComands = InputCommands.InputComds(terminal);
-                Console.WriteLine(inputComands[0]);
-                string command = inputComands[0];
+                List<string> inputCommands = InputCommands.InputComds(terminal);
+                Console.WriteLine(inputCommands[0]);
+                string command = inputCommands[0];
                 string encoding = null;
-                if (inputComands.Count > 1)
-                    inputComands.RemoveAt(0);
-                if ((inputComands.Count > 1) && terminal.CheckEncoding(inputComands[inputComands.Count - 1]) == true)
+                if (inputCommands.Count > 1)
+                    inputCommands.RemoveAt(0);
+                if ((inputCommands.Count > 1) && terminal.CheckEncoding(inputCommands[inputCommands.Count - 1]) == true)
                 {
-                    encoding = inputComands[inputComands.Count - 1];
-                    inputComands.RemoveAt(inputComands.Count - 1);
+                    encoding = inputCommands[inputCommands.Count - 1];
+                    inputCommands.RemoveAt(inputCommands.Count - 1);
                 }
+                inputCommands = TrimQuotes(inputCommands);
                 switch (command)
                 {
                     case "help":
@@ -56,8 +67,8 @@ namespace MyTerminal
                         terminal.PrintSuccessMessage(terminal.GetCurrentDirectory());
                         break;
                     case "cd":
-                        if (CheckCountOfArgumets(inputComands, 1))
-                            terminal.ChangeDirectory(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputCommands, 1))
+                            terminal.ChangeDirectory(ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
@@ -68,14 +79,14 @@ namespace MyTerminal
                         Console.Clear();
                         break;
                     case "copy":
-                        if (CheckCountOfArgumets(inputComands, 1))
-                            terminal.CopyFile(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputCommands, 1))
+                            terminal.CopyFile(ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
                     case "cut":
-                        if (CheckCountOfArgumets(inputComands, 1))
-                            terminal.CutFile(ConcatStrings(inputComands));
+                        if (CheckCountOfArgumets(inputCommands, 1))
+                            terminal.CutFile(ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
@@ -83,49 +94,49 @@ namespace MyTerminal
                         terminal.PasteFile();
                         break;
                     case "delete":
-                        if (CheckCountOfArgumets(inputComands, 1))
+                        if (CheckCountOfArgumets(inputCommands, 1))
                         {
                             if (terminal.AskYesNo())
-                                terminal.DeleteFile(ConcatStrings(inputComands));
+                                terminal.DeleteFile(ConcatStrings(inputCommands));
                         }
                         else
                             terminal.PrintError("Invalid argument");
                         break;
                     case "open":
-                        if (CheckCountOfArgumets(inputComands, 1))
+                        if (CheckCountOfArgumets(inputCommands, 1))
                         {
                             if (encoding != null)
-                                terminal.OpenTextFile(ConcatStrings(inputComands), encoding);
+                                terminal.OpenTextFile(ConcatStrings(inputCommands), encoding);
                             else
-                                terminal.OpenTextFile(ConcatStrings(inputComands));
+                                terminal.OpenTextFile(ConcatStrings(inputCommands));
                         }
                         else
                             terminal.PrintError("Invalid argument");
                         break;
                     case "create":
-                        if (CheckCountOfArgumets(inputComands, 1))
+                        if (CheckCountOfArgumets(inputCommands, 1))
                         {
                             if (encoding != null)
-                                terminal.CreateTextFile(ConcatStrings(inputComands), encoding);
+                                terminal.CreateTextFile(ConcatStrings(inputCommands), encoding);
                             else
-                                terminal.CreateTextFile(ConcatStrings(inputComands));
+                                terminal.CreateTextFile(ConcatStrings(inputCommands));
                         }
                         else
                             terminal.PrintError("Invalid argument");
                         break;
                     case "concat":
-                        if (CheckCountOfArgumets(inputComands, 2))
+                        if (CheckCountOfArgumets(inputCommands, 2))
                         {
-                            terminal.Concat(inputComands[0], inputComands[1]);
+                            terminal.Concat(inputCommands[0], inputCommands[1]);
                             break;
                         }
                         else
                             terminal.PrintError("Invalid files");
                         break;
                     case "filesBy":
-                        if (CheckCountOfArgumets(inputComands, 1) && inputComands[0][0] == '*')
+                        if (CheckCountOfArgumets(inputCommands, 1) && inputCommands[0][0] == '*')
                         {
-                            terminal.GetMaskedFiles(inputComands[0]);
+                            terminal.GetMaskedFiles(inputCommands[0]);
                             break;
                         }
                         else
