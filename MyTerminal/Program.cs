@@ -53,7 +53,7 @@ namespace MyTerminal
                         terminal.PrintComandsInfo();
                         break;
                     case "gd":
-                        Console.WriteLine(terminal.GetCurrentDirectory());
+                        terminal.PrintSuccessMessage(terminal.GetCurrentDirectory());
                         break;
                     case "cd":
                         if (CheckCountOfArgumets(inputComands, 1))

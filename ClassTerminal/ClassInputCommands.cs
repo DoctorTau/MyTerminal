@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using ClassTerminal;
+using System.Linq;
 
 namespace ClassInputCommands
 {
@@ -26,6 +28,7 @@ namespace ClassInputCommands
                         if (curPos > sb.Length)
                             break;
                         curPos++;
+                        sb = new StringBuilder(sb.ToString() + " ");
                         Console.CursorLeft++;
                         break;
                     case ConsoleKey.LeftArrow:
@@ -59,7 +62,7 @@ namespace ClassInputCommands
                         }
                         else
                         {
-                            sb = new StringBuilder(lastCommands[historyPos - 1]);
+                            sb = new StringBuilder(lastCommands[historyPos - 2]);
                         }
                         historyPos--;
                         UpdateLine(sb);
@@ -91,8 +94,20 @@ namespace ClassInputCommands
                 Console.CursorLeft = curPos;
                 inputKey = Console.ReadKey();
             }
-            List<string> returnsList = new List<string>(CutQuotesInString(sb.ToString()));
+            lastCommands.Insert(0, sb.ToString());
+            List<string> returnsList = new List<string>(CutQuotesInString(sb.ToString().TrimEnd()));
+            returnsList = returnsList.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
             return returnsList;
+        }
+
+        private static bool IsQuoteInString(string checkString)
+        {
+            for (int i = 0; i < checkString.Length; i++)
+            {
+                if (checkString[i] != ' ')
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -109,30 +124,49 @@ namespace ClassInputCommands
             Console.ResetColor();
         }
 
-        public static StringBuilder AutoCompleteMethod(StringBuilder sb, Terminal terminal)
+        /// <summary>
+        /// Finds all matches in files and directories that locate in current or child directory.
+        /// </summary>
+        /// <param name="inputLine">Line with commands.</param>
+        /// <param name="terminal">Working  terminal.</param>
+        /// <returns>List of all matches.</returns>
+        public static List<String> SearchForMatches(List<String> inputLine, Terminal terminal)
         {
-            List<string> inputLine = TrimStringElements(CutQuotesInString(sb.ToString()));
             List<string> matchedLines = new List<string>();
             if (inputLine.Count == 1)
             {
                 matchedLines = GetMachedLines(inputLine[0], terminal.GetAvailableComands());
             }
-            else if (inputLine.Count > 1 && inputLine[0] == "cd")
+            else if (inputLine.Count > 1 && IsPartOfPathChecker(inputLine[inputLine.Count - 1]))
             {
-                if (terminal.GetIsDirectory())
-                    matchedLines = GetMachedLines(inputLine[inputLine.Count - 1], terminal.GetDirectoriesInCurrentPosition());
-                else
-                    matchedLines = GetMachedLines(inputLine[inputLine.Count - 1], terminal.GetDrives());
+                Tuple<string, string> pathOfPath = GetPartOfPath(inputLine[inputLine.Count - 1]);
+                matchedLines = GetMachedLines(pathOfPath.Item2, GetFileFromDirectory(terminal.GetCurrentDirectory() + pathOfPath.Item1));
             }
             else if (inputLine.Count > 1)
             {
-                matchedLines = GetMachedLines(inputLine[inputLine.Count - 1], terminal.GetFilesInCurrentPosition());
-            }
-            else
-            {
-                return sb;
+                if (terminal.GetIsDirectory())
+                {
+                    matchedLines = GetMachedLines(inputLine[inputLine.Count - 1], terminal.GetDirectoriesInCurrentPosition());
+                    matchedLines = matchedLines.Concat(GetMachedLines(inputLine[inputLine.Count - 1], terminal.GetFilesInCurrentPosition())).ToList();
+                }
+                else
+                    matchedLines = GetMachedLines(inputLine[inputLine.Count - 1], terminal.GetDrives());
             }
 
+            return matchedLines;
+        }
+
+        /// <summary>
+        /// Complite input string to existing command or file. 
+        /// </summary>
+        /// <param name="sb">Input string.</param>
+        /// <param name="terminal">Working terminal.</param>
+        /// <returns>New string with completed input.</returns>
+        public static StringBuilder AutoCompleteMethod(StringBuilder sb, Terminal terminal)
+        {
+            List<string> inputLine = CutQuotesInString(sb.ToString());
+            List<string> matchedLines = SearchForMatches(inputLine, terminal);
+            bool hasQuotes = inputLine[inputLine.Count - 1].Contains(' ');
             if (matchedLines.Count > 1)
             {
                 Console.WriteLine();
@@ -140,9 +174,27 @@ namespace ClassInputCommands
                 return sb;
             }
 
+            if (matchedLines.Count == 1 && IsPartOfPathChecker(inputLine[inputLine.Count - 1]))
+            {
+                inputLine[inputLine.Count - 1] = GetPartOfPath(inputLine[inputLine.Count - 1]).Item1 + matchedLines[0];
+                if (hasQuotes)
+                    inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
+                sb = new StringBuilder(ConcatStrings(inputLine) + "\\");
+                return sb;
+            }
+            if (matchedLines.Count == 1)
+                inputLine[inputLine.Count - 1] = matchedLines[0];
+            if (matchedLines.Count == 1 && !IsFileChecker(inputLine[inputLine.Count - 1]) && inputLine.Count > 1)
+            {
+                if (hasQuotes)
+                    inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
+                sb = new StringBuilder(ConcatStrings(inputLine) + "\\");
+                return sb;
+            }
             if (matchedLines.Count == 1)
             {
-                inputLine[inputLine.Count - 1] = matchedLines[0];
+                if (hasQuotes)
+                    inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
                 sb = new StringBuilder(ConcatStrings(inputLine) + " ");
                 return sb;
             }
@@ -163,15 +215,6 @@ namespace ClassInputCommands
             }
             Console.ResetColor();
             Console.WriteLine();
-        }
-
-        public static List<string> TrimStringElements(List<string> elements)
-        {
-            for (int i = 0; i < elements.Count; i++)
-            {
-                elements[i] = elements[i].Trim(' ');
-            }
-            return elements;
         }
 
         /// <summary>
@@ -239,6 +282,63 @@ namespace ClassInputCommands
             }
 
             return output.TrimEnd();
+        }
+
+        /// <summary>
+        ///  Checks is input name file or directory.
+        /// </summary>
+        /// <returns>True if it is file, false otherwise.</returns>/
+        private static bool IsFileChecker(string name)
+        {
+            return name.Contains('.');
+        }
+
+        /// <summary>
+        ///  Checks if input name is a part of path. 
+        /// </summary>
+        /// <returns>True if it is a part of path, false otherwise.</returns>
+        private static bool IsPartOfPathChecker(string name)
+        {
+            return name.Contains('\\');
+        }
+
+        /// <summary>
+        /// Cut the end of unfinished path. 
+        /// </summary>
+        /// <param name="partOfPath">Part of path to cut.</param>
+        /// <returns>Part of correct path.</returns>
+        private static Tuple<string, string> GetPartOfPath(string partOfPath)
+        {
+            string[] pathInMas = partOfPath.Split('\\');
+            string path = "";
+            for (int i = 0; i < pathInMas.Length - 1; i++)
+            {
+                path += pathInMas[i] + "\\";
+            }
+            return new Tuple<string, string>(path, pathInMas[pathInMas.Length - 1]);
+        }
+
+        /// <summary>
+        /// Gets all directory's elements. 
+        /// </summary>
+        /// <param name="path">Full  path to directory.</param>
+        /// <returns>List with elements names.</returns>
+        public static List<string> GetFileFromDirectory(string path)
+        {
+            DirectoryInfo dir = new DirectoryInfo(path);
+            List<string> elements = new List<string>();
+            if (dir.Exists)
+            {
+                foreach (var element in dir.GetDirectories())
+                {
+                    elements.Add(element.Name);
+                }
+                foreach (var element in dir.GetFiles())
+                {
+                    elements.Add(element.Name);
+                }
+            }
+            return elements;
         }
     }
 }

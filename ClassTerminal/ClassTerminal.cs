@@ -151,6 +151,7 @@ namespace ClassTerminal
                 if (CheckIsDrive(dirName))
                 {
                     this.currentDirectory = new DirectoryInfo(path: dirName);
+                    isDirectory = true;
                     return;
                 }
                 PrintError("Incorect drive name.");
