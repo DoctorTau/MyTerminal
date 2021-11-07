@@ -1,5 +1,6 @@
 ﻿using System;
 using ClassTerminal;
+using ClassInputComands;
 using System.Collections.Generic;
 namespace MyTerminal
 {
@@ -23,7 +24,7 @@ namespace MyTerminal
         }
 
         /// <summary>
-        /// Split string by quotes. 
+        /// Split string by quotes. If there are no quotes cut splits string by spaces.
         /// </summary>
         /// <param name="inStr">String to split.</param>
         /// <returns>List of separated strings.</returns>
@@ -89,7 +90,7 @@ namespace MyTerminal
                             terminal.PrintError("Invalid argument");
                         break;
                     case "ls":
-                        terminal.ListOfElements();
+                        terminal.PrintElementInCurentPosition();
                         break;
                     case "clear":
                         Console.Clear();

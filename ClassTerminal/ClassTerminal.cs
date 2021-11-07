@@ -12,6 +12,8 @@ namespace ClassTerminal
     public partial class Terminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
+        //List of available comands.
+        List<string> commands = new List<string>(new string[] { "gd", "cd", "ls", "open", "copy", "cut", "paste", "delete", "create", "concat", "clear", "filesBy" });
         bool isDirectory = true;
         //Checks if cur pos is in Drives.
         FileInfo bufferFile = null;
@@ -45,41 +47,55 @@ namespace ClassTerminal
             }
         }
 
-        /// <summary>
-        /// Prints  elements of current directory.
-        /// </summary>
-        private void PrintElements()
+        public List<string> GetAvailableComands()
         {
-            string elements = "";
+            return this.commands;
+        }
+
+        /// <summary>
+        /// Returns string with directories names. 
+        /// </summary>
+        /// <returns>Names of directories.</returns>
+        public List<string> GetDirectoriesInCurrentPosition()
+        {
+            List<string> dirNames = new List<string>();
             // Prints directories
             foreach (var dirInfo in currentDirectory.GetDirectories())
             {
                 try
                 {
-                    elements += $"[{dirInfo.Name}]\n";
+                    dirNames.Add(dirInfo.Name);
                 }
                 catch (System.UnauthorizedAccessException)
                 {
-                    elements += "[Acces error]\n";
+                    dirNames.Add("[Acces error]");
                 }
 
             }
+            return dirNames;
+        }
 
-            // Prints files
+        /// <summary>
+        /// Returns string with filenames.
+        /// </summary>
+        /// <returns>Names of files.</returns>
+        private List<string> GetFilesInCurrentPosition()
+        {
+            List<string> fileNames = new List<string>();
             foreach (var fileInfo in currentDirectory.GetFiles())
             {
                 try
                 {
-                    elements += $"{fileInfo.Name} ({fileInfo.Length / 8}B)\n";
+                    fileNames.Add(fileInfo.FullName);
                 }
                 catch (IOException)
                 {
-                    elements += "File access error\n";
+                    fileNames.Add("File access error");
                 }
 
             }
 
-            PrintListOfFiles(elements);
+            return fileNames;
         }
 
         /// <summary>
@@ -163,7 +179,7 @@ namespace ClassTerminal
         {
             if (this.isDirectory)
             {
-                PrintElements();
+                GetFilesInCurrentPosition();
                 return;
             }
             PrintDrives();

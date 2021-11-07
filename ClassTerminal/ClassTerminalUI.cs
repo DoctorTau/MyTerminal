@@ -50,6 +50,20 @@ namespace ClassTerminal
             Console.ResetColor();
         }
 
+        public void PrintElementInCurentPosition()
+        {
+            string elements = "";
+            foreach (string element in this.GetDirectoriesInCurrentPosition())
+            {
+                elements += "[" + element + "]\n";
+            }
+            foreach (string element in this.GetFilesInCurrentPosition())
+            {
+                elements += element + "\n";
+            }
+            PrintListOfFiles(elements);
+        }
+
         /// <summary>
         /// Print messege in green color. 
         /// </summary>
