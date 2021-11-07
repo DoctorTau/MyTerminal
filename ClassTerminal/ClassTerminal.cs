@@ -52,6 +52,7 @@ namespace ClassTerminal
             return this.commands;
         }
 
+
         /// <summary>
         /// Returns string with directories names. 
         /// </summary>
@@ -79,14 +80,14 @@ namespace ClassTerminal
         /// Returns string with filenames.
         /// </summary>
         /// <returns>Names of files.</returns>
-        private List<string> GetFilesInCurrentPosition()
+        public List<string> GetFilesInCurrentPosition()
         {
             List<string> fileNames = new List<string>();
             foreach (var fileInfo in currentDirectory.GetFiles())
             {
                 try
                 {
-                    fileNames.Add(fileInfo.FullName);
+                    fileNames.Add(fileInfo.Name);
                 }
                 catch (IOException)
                 {
@@ -99,16 +100,17 @@ namespace ClassTerminal
         }
 
         /// <summary>
-        /// Prints list of drives. 
+        /// Returns list with Drives names.  
         /// </summary>
-        private void PrintDrives()
+        /// <returns>List of Drives names.</returns>
+        public List<string> GetDrives()
         {
-            string drives = "";
+            List<string> drives = new List<string>();
             foreach (var driveInfo in DriveInfo.GetDrives())
             {
-                drives += $"[{driveInfo.Name}]\n";
+                drives.Add(driveInfo.Name);
             }
-            PrintListOfFiles(drives);
+            return drives;
         }
 
         /// <summary>
@@ -172,17 +174,9 @@ namespace ClassTerminal
             PrintError("There is no such directory");
         }
 
-        /// <summary>
-        /// Prints list of element if it is a directory, otherwise prints list of drives. 
-        /// </summary>
-        public void ListOfElements()
+        public bool GetIsDirectory()
         {
-            if (this.isDirectory)
-            {
-                GetFilesInCurrentPosition();
-                return;
-            }
-            PrintDrives();
+            return this.isDirectory;
         }
 
         /// <summary>

@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassTerminal\ClassTerminal.csproj" />
-    <ProjectReference Include="..\ComandsInput\ComandsInput.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

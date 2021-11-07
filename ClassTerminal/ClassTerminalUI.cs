@@ -53,6 +53,7 @@ namespace ClassTerminal
         public void PrintElementInCurentPosition()
         {
             string elements = "";
+            if(this.isDirectory){
             foreach (string element in this.GetDirectoriesInCurrentPosition())
             {
                 elements += "[" + element + "]\n";
@@ -60,6 +61,12 @@ namespace ClassTerminal
             foreach (string element in this.GetFilesInCurrentPosition())
             {
                 elements += element + "\n";
+            }
+            }
+            else{
+                foreach(string element in this.GetDrives()){
+                    elements += "[" + element + "]\n";
+                }
             }
             PrintListOfFiles(elements);
         }

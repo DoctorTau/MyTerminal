@@ -1,6 +1,6 @@
 ﻿using System;
 using ClassTerminal;
-using ClassInputComands;
+using ClassInputCommands;
 using System.Collections.Generic;
 namespace MyTerminal
 {
@@ -23,36 +23,6 @@ namespace MyTerminal
             return output.TrimEnd();
         }
 
-        /// <summary>
-        /// Split string by quotes. If there are no quotes cut splits string by spaces.
-        /// </summary>
-        /// <param name="inStr">String to split.</param>
-        /// <returns>List of separated strings.</returns>
-        public static List<string> CutQuotesInString(string inStr)
-        {
-            char[] charsInString = inStr.ToCharArray();
-            bool quoteFlag = false;
-
-            for (int i = 0; i < charsInString.Length; i++)
-            {
-                if (charsInString[i] == '"')
-                {
-                    quoteFlag = !quoteFlag;
-                }
-                if (!quoteFlag && charsInString[i] == ' ')
-                {
-                    charsInString[i] = '|';
-                }
-            }
-
-            List<string> returnsList = new List<string>((new string(charsInString)).Split('|'));
-            for (int i = 0; i < returnsList.Count; i++)
-            {
-                returnsList[i] = returnsList[i].Trim('"');
-            }
-
-            return returnsList;
-        }
 
         public static bool CheckCountOfArgumets(List<string> commands, int countOfArgumets)
         {
@@ -61,11 +31,13 @@ namespace MyTerminal
 
         static void Main(string[] args)
         {
+            bool workFlag = true;
             Terminal terminal = new Terminal("C:\\");
-            string input = Console.ReadLine();
-            while (input != "quit")
+            // string input = Console.ReadLine();
+            while (workFlag)
             {
-                List<string> inputComands = CutQuotesInString(input);
+                List<string> inputComands = InputCommands.InputComds(terminal);
+                Console.WriteLine(inputComands[0]);
                 string command = inputComands[0];
                 string encoding = null;
                 if (inputComands.Count > 1)
@@ -159,12 +131,16 @@ namespace MyTerminal
                         else
                             terminal.PrintError("Ivalid mask");
                         break;
+                    case "quit":
+                        workFlag = false;
+                        break;
                     default:
                         terminal.PrintError("Unkcown command");
                         break;
                 }
-                input = Console.ReadLine();
+                // input = Console.ReadLine();
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }
