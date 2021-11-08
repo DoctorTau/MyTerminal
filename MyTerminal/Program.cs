@@ -6,24 +6,6 @@ namespace MyTerminal
 {
     class Program
     {
-        /// <summary>
-        /// Concats a banch of string at one.
-        /// </summary>
-        /// <param name="inStr">Massive of strings.</param>
-        /// <returns>One string which consists of string form inStr.</returns>
-        public static string ConcatStrings(List<string> inStr)
-        {
-            string output = "";
-
-            foreach (string line in inStr)
-            {
-                output += line + " ";
-            }
-
-            return output.TrimEnd();
-        }
-
-
         public static bool CheckCountOfArgumets(List<string> commands, int countOfArgumets)
         {
             return commands.Count == countOfArgumets;
@@ -32,9 +14,7 @@ namespace MyTerminal
         public static List<string> TrimQuotes(List<string> commands)
         {
             for (int i = 0; i < commands.Count; i++)
-            {
                 commands[i] = commands[i].Trim('"');
-            }
 
             return commands;
         }
@@ -69,7 +49,7 @@ namespace MyTerminal
                         break;
                     case "cd":
                         if (CheckCountOfArgumets(inputCommands, 1))
-                            terminal.ChangeDirectory(ConcatStrings(inputCommands));
+                            terminal.ChangeDirectory(InputCommands.ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
@@ -81,13 +61,13 @@ namespace MyTerminal
                         break;
                     case "copy":
                         if (CheckCountOfArgumets(inputCommands, 1))
-                            terminal.CopyFile(ConcatStrings(inputCommands));
+                            terminal.CopyFile(InputCommands.ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
                     case "cut":
                         if (CheckCountOfArgumets(inputCommands, 1))
-                            terminal.CutFile(ConcatStrings(inputCommands));
+                            terminal.CutFile(InputCommands.ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
@@ -98,7 +78,7 @@ namespace MyTerminal
                         if (CheckCountOfArgumets(inputCommands, 1))
                         {
                             if (terminal.AskYesNo())
-                                terminal.DeleteFile(ConcatStrings(inputCommands));
+                                terminal.DeleteFile(InputCommands.ConcatStrings(inputCommands));
                         }
                         else
                             terminal.PrintError("Invalid argument");
@@ -107,9 +87,9 @@ namespace MyTerminal
                         if (CheckCountOfArgumets(inputCommands, 1))
                         {
                             if (encoding != null)
-                                terminal.OpenTextFile(ConcatStrings(inputCommands), encoding);
+                                terminal.OpenTextFile(InputCommands.ConcatStrings(inputCommands), encoding);
                             else
-                                terminal.OpenTextFile(ConcatStrings(inputCommands));
+                                terminal.OpenTextFile(InputCommands.ConcatStrings(inputCommands));
                         }
                         else
                             terminal.PrintError("Invalid argument");
@@ -118,9 +98,9 @@ namespace MyTerminal
                         if (CheckCountOfArgumets(inputCommands, 1))
                         {
                             if (encoding != null)
-                                terminal.CreateTextFile(ConcatStrings(inputCommands), encoding);
+                                terminal.CreateTextFile(InputCommands.ConcatStrings(inputCommands), encoding);
                             else
-                                terminal.CreateTextFile(ConcatStrings(inputCommands));
+                                terminal.CreateTextFile(InputCommands.ConcatStrings(inputCommands));
                         }
                         else
                             terminal.PrintError("Invalid argument");
