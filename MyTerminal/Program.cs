@@ -19,6 +19,15 @@ namespace MyTerminal
             return commands;
         }
 
+        public static bool IsInt(string strToCheck)
+        {
+            foreach (char sbl in strToCheck)
+            {
+                if (!char.IsDigit(sbl)) return false;
+            }
+            return true;
+        }
+
         static void Main(string[] args)
         {
             bool workFlag = true;
@@ -118,9 +127,14 @@ namespace MyTerminal
                             terminal.PrintError("Invalid files");
                         break;
                     case "filesBy":
+                        if (CheckCountOfArgumets(inputCommands, 2) && inputCommands[0][0] == '*' && IsInt(inputCommands[1]))
+                        {
+                            terminal.GetMaskedFilesInCurDir(inputCommands[0], int.Parse(inputCommands[1]));
+                            break;
+                        }
                         if (CheckCountOfArgumets(inputCommands, 1) && inputCommands[0][0] == '*')
                         {
-                            terminal.GetMaskedFiles(inputCommands[0]);
+                            terminal.GetMaskedFilesInCurDir(inputCommands[0], 1);
                             break;
                         }
                         else

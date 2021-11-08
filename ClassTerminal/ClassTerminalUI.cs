@@ -25,7 +25,7 @@ namespace ClassTerminal
             Console.WriteLine("create {file} {encode} - creates a new file in choosed encode.  Default encoding is UTF-8.\n");
             Console.WriteLine("concat \"{file 1}\" \"{file 2}\" ... - concats 2 and more files into 1 and print it to the console.\n");
             Console.WriteLine("clear - clears the console.\n");
-            Console.WriteLine("filesBy {*...} - prints file whith your mask.\n");
+            Console.WriteLine("filesBy {*...} {depth}- prints file whith your mask. Default depth is 1.\n");
         }
 
         /// <summary>

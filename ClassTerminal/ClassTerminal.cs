@@ -443,13 +443,60 @@ namespace ClassTerminal
         /// Prints file by mask. 
         /// </summary>
         /// <param name="pattern">File mask.</param>
-        public void GetMaskedFiles(string pattern)
+        public void GetMaskedFilesInCurDir(string pattern, int depth = 1, int curDepth = 0)
         {
             string elements = "";
             try
             {
+                if (curDepth < depth - 1)
+                {
+                    foreach (var directory in this.currentDirectory.GetDirectories())
+                    {
+                        Console.Write($"[{directory.Name}]\n");
+                        GetMaskedFiles(directory, pattern, depth, curDepth + 1);
+                    }
+                }
                 foreach (var fileInfo in this.currentDirectory.GetFiles(pattern))
+                {
                     elements += $"{fileInfo.Name} ({fileInfo.Length / 8}B)\n";
+                }
+                PrintListOfFiles(elements);
+            }
+            catch (Exception e)
+            {
+                switch (e)
+                {
+                    case SecurityException:
+                        PrintError("Acces Error");
+                        break;
+                    case ArgumentException:
+                        PrintError("Wrong search pattern");
+                        Console.WriteLine(pattern);
+                        break;
+                }
+            }
+        }
+
+        private void GetMaskedFiles(DirectoryInfo directoryToSearch, string pattern, int depth, int curDepth)
+        {
+            string elements = "";
+            string spaces = "";
+            for (int i = 0; i < curDepth; i++)
+                spaces += "    ";
+            try
+            {
+                if (curDepth < depth - 1)
+                {
+                    foreach (var directory in directoryToSearch.GetDirectories())
+                    {
+                        Console.Write($"{spaces}[{directory.Name}]\n");
+                        GetMaskedFiles(directory, pattern, depth, curDepth + 1);
+                    }
+                }
+                foreach (var fileInfo in directoryToSearch.GetFiles(pattern))
+                {
+                    elements += $"{spaces}{fileInfo.Name} ({fileInfo.Length / 8}B)\n";
+                }
                 PrintListOfFiles(elements);
             }
             catch (Exception e)
