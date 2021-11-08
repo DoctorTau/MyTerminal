@@ -61,17 +61,25 @@ namespace ClassTerminal
         {
             List<string> dirNames = new List<string>();
             // Prints directories
-            foreach (var dirInfo in currentDirectory.GetDirectories())
+            try
             {
-                try
+                foreach (var dirInfo in currentDirectory.GetDirectories())
                 {
-                    dirNames.Add(dirInfo.Name);
-                }
-                catch (System.UnauthorizedAccessException)
-                {
-                    dirNames.Add("[Acces error]");
-                }
+                    try
+                    {
+                        dirNames.Add(dirInfo.Name);
+                    }
+                    catch (System.UnauthorizedAccessException)
+                    {
+                        dirNames.Add("[Acces error]");
+                    }
 
+                }
+            }
+            catch (Exception e)
+            {
+                PrintError(e.Message);
+                return new List<string>();
             }
             return dirNames;
         }
@@ -83,17 +91,23 @@ namespace ClassTerminal
         public List<string> GetFilesInCurrentPosition()
         {
             List<string> fileNames = new List<string>();
-            foreach (var fileInfo in currentDirectory.GetFiles())
+            try
             {
-                try
+                foreach (var fileInfo in currentDirectory.GetFiles())
                 {
-                    fileNames.Add(fileInfo.Name);
-                }
-                catch (IOException)
-                {
-                    fileNames.Add("File access error");
-                }
+                    try
+                    {
+                        fileNames.Add(fileInfo.Name);
+                    }
+                    catch (IOException)
+                    {
+                    }
 
+                }
+            }
+            catch (Exception e)
+            {
+                PrintError(e.Message);
             }
 
             return fileNames;
