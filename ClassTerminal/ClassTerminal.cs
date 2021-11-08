@@ -351,17 +351,28 @@ namespace ClassTerminal
         /// </summary>
         /// <param name="firstFileName">First file name.</param>
         /// <param name="secondFileName">Second file name.</param>
-        public void Concat(string firstFileName, string secondFileName)
+        public void Concat(List<string> filesToContac)
         {
-            FileInfo fileInfo1 = new FileInfo(this.currentDirectory.FullName + "\\" + firstFileName);
-            FileInfo fileInfo2 = new FileInfo(this.currentDirectory.FullName + "\\" + secondFileName);
-            if (fileInfo1.Exists && fileInfo2.Exists)
+            if (!CheckAllFiles(filesToContac))
             {
-                this.OpenTextFile(firstFileName);
-                this.OpenTextFile(secondFileName);
-                return;
+                PrintError("Incorrect filenames");
             }
-            PrintError("Incorrect filenames");
+            foreach (string fileName in filesToContac)
+            {
+                FileInfo fileInfo = new FileInfo(this.currentDirectory.FullName + "\\" + fileName);
+                this.OpenTextFile(fileName);
+            }
+        }
+
+        public bool CheckAllFiles(List<string> fileNames)
+        {
+            foreach (string fileName in fileNames)
+            {
+                FileInfo fileInfo = new FileInfo(this.currentDirectory.FullName + "\\" + fileName);
+                if (!fileInfo.Exists)
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>

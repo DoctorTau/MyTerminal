@@ -126,9 +126,9 @@ namespace MyTerminal
                             terminal.PrintError("Invalid argument");
                         break;
                     case "concat":
-                        if (CheckCountOfArgumets(inputCommands, 2))
+                        if (inputCommands.Count > 1)
                         {
-                            terminal.Concat(inputCommands[0], inputCommands[1]);
+                            terminal.Concat(inputCommands);
                             break;
                         }
                         else
