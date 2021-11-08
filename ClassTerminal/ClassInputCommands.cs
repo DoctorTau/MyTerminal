@@ -94,21 +94,11 @@ namespace ClassInputCommands
             return returnsList;
         }
 
-        private static bool IsQuoteInString(string checkString)
-        {
-            for (int i = 0; i < checkString.Length; i++)
-            {
-                if (checkString[i] != ' ')
-                    return false;
-            }
-            return true;
-        }
-
         /// <summary>
         /// Clears input line and puts new text there. 
         /// </summary>
         /// <param name="sb">StringBuilder with new text.</param>
-        public static void UpdateLine(StringBuilder sb)
+        private static void UpdateLine(StringBuilder sb)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("\r");
@@ -124,7 +114,7 @@ namespace ClassInputCommands
         /// <param name="inputLine">Line with commands.</param>
         /// <param name="terminal">Working  terminal.</param>
         /// <returns>List of all matches.</returns>
-        public static List<String> SearchForMatches(List<String> inputLine, Terminal terminal)
+        private static List<String> SearchForMatches(List<String> inputLine, Terminal terminal)
         {
             List<string> matchedLines = new List<string>();
             if (inputLine.Count == 1)
@@ -154,7 +144,7 @@ namespace ClassInputCommands
         /// <param name="sb">Input string.</param>
         /// <param name="terminal">Working terminal.</param>
         /// <returns>New string with completed input.</returns>
-        public static StringBuilder AutoCompleteMethod(StringBuilder sb, Terminal terminal)
+        private static StringBuilder AutoCompleteMethod(StringBuilder sb, Terminal terminal)
         {
             List<string> inputLine = CutQuotesInString(sb.ToString());
             bool hasQuotes = inputLine[inputLine.Count - 1].Contains(' ') || inputLine[inputLine.Count - 1].Contains('"');
@@ -218,7 +208,7 @@ namespace ClassInputCommands
         /// <param name="line">Line to find.</param>
         /// <param name="linesForSearch">List of lines to search in.</param>
         /// <returns>List of mached lines.</returns>
-        public static List<string> GetMachedLines(string line, List<string> linesForSearch)
+        private static List<string> GetMachedLines(string line, List<string> linesForSearch)
         {
             int lenOfInputedLine = line.Length;
             List<string> matchedLines = new List<string>();
