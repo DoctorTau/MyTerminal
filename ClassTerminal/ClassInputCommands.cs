@@ -46,9 +46,7 @@ namespace ClassInputCommands
                             sb = new StringBuilder(lastCommands[0]);
                         }
                         else
-                        {
                             sb = new StringBuilder(lastCommands[historyPos]);
-                        }
                         historyPos++;
                         UpdateLine(sb);
                         curPos = sb.Length;
@@ -57,13 +55,9 @@ namespace ClassInputCommands
                         if (historyPos == 0)
                             break;
                         if (historyPos == 1)
-                        {
                             sb = new StringBuilder(bufferForInput);
-                        }
                         else
-                        {
                             sb = new StringBuilder(lastCommands[historyPos - 2]);
-                        }
                         historyPos--;
                         UpdateLine(sb);
                         curPos = sb.Length;
@@ -134,9 +128,7 @@ namespace ClassInputCommands
         {
             List<string> matchedLines = new List<string>();
             if (inputLine.Count == 1)
-            {
                 matchedLines = GetMachedLines(inputLine[0], terminal.GetAvailableComands());
-            }
             else if (inputLine.Count > 1 && IsPartOfPathChecker(inputLine[inputLine.Count - 1]))
             {
                 Tuple<string, string> pathOfPath = GetPartsOfPath(inputLine[inputLine.Count - 1]);
@@ -211,9 +203,7 @@ namespace ClassInputCommands
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             foreach (var element in elements)
-            {
                 Console.Write(element + " ");
-            }
             Console.ResetColor();
             Console.WriteLine();
         }
@@ -231,9 +221,7 @@ namespace ClassInputCommands
             foreach (var lineInList in linesForSearch)
             {
                 if (lineInList.Length >= lenOfInputedLine && line == lineInList.Substring(0, lenOfInputedLine))
-                {
                     matchedLines.Add(lineInList);
-                }
             }
 
             return matchedLines;
@@ -260,10 +248,6 @@ namespace ClassInputCommands
             }
 
             List<string> returnsList = new List<string>((new string(charsInString)).Split('|'));
-            for (int i = 0; i < returnsList.Count; i++)
-            {
-                // returnsList[i] = returnsList[i].Trim('"');
-            }
 
             return returnsList;
         }
@@ -278,9 +262,7 @@ namespace ClassInputCommands
             string output = "";
 
             foreach (string line in inStr)
-            {
                 output += line + " ";
-            }
 
             return output.TrimEnd();
         }
@@ -313,9 +295,7 @@ namespace ClassInputCommands
             string[] pathInMas = partOfPath.Split('\\');
             string path = "";
             for (int i = 0; i < pathInMas.Length - 1; i++)
-            {
                 path += pathInMas[i] + "\\";
-            }
             return new Tuple<string, string>(path, pathInMas[pathInMas.Length - 1]);
         }
 
@@ -331,13 +311,9 @@ namespace ClassInputCommands
             if (dir.Exists)
             {
                 foreach (var element in dir.GetDirectories())
-                {
                     elements.Add(element.Name);
-                }
                 foreach (var element in dir.GetFiles())
-                {
                     elements.Add(element.Name);
-                }
             }
             return elements;
         }

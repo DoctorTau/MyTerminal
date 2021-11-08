@@ -38,15 +38,14 @@ namespace ClassTerminal
         public string GetCurrentDirectory()
         {
             if (this.isDirectory)
-            {
                 return (this.currentDirectory.FullName);
-            }
-            else
-            {
-                return ("");
-            }
+            return ("");
         }
 
+        /// <summary>
+        /// Returns list of command. 
+        /// </summary>
+        /// <returns>List with commands.</returns>
         public List<string> GetAvailableComands()
         {
             return this.commands;
@@ -107,9 +106,7 @@ namespace ClassTerminal
         {
             List<string> drives = new List<string>();
             foreach (var driveInfo in DriveInfo.GetDrives())
-            {
                 drives.Add(driveInfo.Name.TrimEnd('\\'));
-            }
             return drives;
         }
 
@@ -191,9 +188,7 @@ namespace ClassTerminal
         public bool CheckEncoding(string encoding)
         {
             if (this.encodings.Find(findEl => findEl == encoding) != null)
-            {
                 return true;
-            }
             return false;
         }
 
@@ -276,15 +271,11 @@ namespace ClassTerminal
                     this.bufferFile = null;
                 }
                 else
-                {
                     this.bufferFile.CopyTo(this.currentDirectory.FullName + "\\" + this.bufferFile.Name, true);
-                }
                 PrintSuccessMessage("File pasted");
             }
             else
-            {
                 PrintError("No file in buffer");
-            }
         }
 
         /// <summary>
@@ -338,9 +329,7 @@ namespace ClassTerminal
             Console.WriteLine("Enter your text:");
             string text = Console.ReadLine();
             using (StreamWriter sw = new StreamWriter(File.Open(filename, FileMode.Create), encode))
-            {
                 sw.Write(text);
-            }
             File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory.FullName + "\\" + filename);
             PrintSuccessMessage("File successfully created.");
 
@@ -354,9 +343,7 @@ namespace ClassTerminal
         public void Concat(List<string> filesToContac)
         {
             if (!CheckAllFiles(filesToContac))
-            {
                 PrintError("Incorrect filenames");
-            }
             foreach (string fileName in filesToContac)
             {
                 FileInfo fileInfo = new FileInfo(this.currentDirectory.FullName + "\\" + fileName);
@@ -385,10 +372,7 @@ namespace ClassTerminal
             try
             {
                 foreach (var fileInfo in this.currentDirectory.GetFiles(pattern))
-                {
-
                     elements += $"{fileInfo.Name} ({fileInfo.Length / 8}B)\n";
-                }
                 PrintListOfFiles(elements);
             }
             catch (Exception e)
