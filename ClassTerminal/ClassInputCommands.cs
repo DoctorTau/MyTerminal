@@ -10,6 +10,7 @@ namespace ClassInputCommands
     public static class InputCommands
     {
         static List<string> lastCommands = new List<string>();
+        static bool isDoubleTab = false;
 
         public static List<string> InputComds(Terminal terminal)
         {
@@ -169,8 +170,16 @@ namespace ClassInputCommands
             List<string> matchedLines = SearchForMatches(inputLine, terminal);
             if (matchedLines.Count > 1)
             {
-                Console.WriteLine();
-                PrintElementsOfList(matchedLines);
+                if (isDoubleTab)
+                {
+                    Console.WriteLine();
+                    PrintElementsOfList(matchedLines);
+                    isDoubleTab = false;
+                }
+                else
+                {
+                    isDoubleTab = true;
+                }
                 return sb;
             }
 
