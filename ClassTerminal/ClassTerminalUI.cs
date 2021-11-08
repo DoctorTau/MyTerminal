@@ -18,6 +18,7 @@ namespace ClassTerminal
             Console.WriteLine("ls - prints you list of file and dirrectories in your current directory\n");
             Console.WriteLine("open {file} {encode} - opens file in your encode. Defaulten code - UTF-8\n");
             Console.WriteLine("copy {file} - adds file to the buffer.\n");
+            Console.WriteLine("copyAll - adds all files and directories to the buffer.\n");
             Console.WriteLine("cut {file} - adds file to the buffer and  deletes it after pasting.\n");
             Console.WriteLine("paste - paste file from the buffer. If type was cutting that file would stay in the buffer, otherwise buffer would be cleaned.\n");
             Console.WriteLine("delete {file} - delete a file in current directory.\n");

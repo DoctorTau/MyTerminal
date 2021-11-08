@@ -65,6 +65,9 @@ namespace MyTerminal
                         else
                             terminal.PrintError("Invalid argument");
                         break;
+                    case "copyAll":
+                        terminal.CopyAllFiles();
+                        break;
                     case "cut":
                         if (CheckCountOfArgumets(inputCommands, 1))
                             terminal.CutFile(InputCommands.ConcatStrings(inputCommands));
@@ -72,7 +75,7 @@ namespace MyTerminal
                             terminal.PrintError("Invalid argument");
                         break;
                     case "paste":
-                        terminal.PasteFile();
+                        terminal.Paste();
                         break;
                     case "delete":
                         if (CheckCountOfArgumets(inputCommands, 1))

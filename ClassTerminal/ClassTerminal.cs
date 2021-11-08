@@ -13,10 +13,11 @@ namespace ClassTerminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
         //List of available comands.
-        List<string> commands = new List<string>(new string[] { "gd", "cd", "ls", "open", "copy", "cut", "paste", "delete", "create", "concat", "clear", "filesBy" });
+        List<string> commands = new List<string>(new string[] { "gd", "cd", "ls", "open", "copy", "cut", "paste", "delete", "create", "concat", "clear", "filesBy", "copyAll" });
         bool isDirectory = true;
         //Checks if cur pos is in Drives.
         FileInfo bufferFile = null;
+        DirectoryInfo bufferDirectory = null;
         //Buffer file for coping.
         bool isCut = false;
         // Type of coping: copy or cut.
@@ -234,10 +235,21 @@ namespace ClassTerminal
             if (fileInfo.Exists)
             {
                 this.bufferFile = fileInfo;
+                this.bufferDirectory = null;
                 PrintSuccessMessage("File copied");
                 return;
             }
             PrintError("Incorrect filename");
+        }
+
+        /// <summary>
+        /// Adds directoru to the buffer.
+        /// </summary>
+        public void CopyAllFiles()
+        {
+            this.bufferDirectory = this.currentDirectory;
+            this.bufferFile = null;
+            PrintSuccessMessage("All files copied");
         }
 
         /// <summary>
@@ -255,6 +267,25 @@ namespace ClassTerminal
                 return;
             }
             PrintError("Incorrect filename");
+        }
+
+        /// <summary>
+        /// Paste information from buffer to current directory. 
+        /// </summary>
+        public void Paste()
+        {
+            if (this.bufferFile == null && this.bufferDirectory == null)
+            {
+                PrintError("Nothing to paste");
+                return;
+            }
+            if (this.bufferFile == null)
+            {
+                PasteDirectory();
+                return;
+            }
+            if (this.bufferDirectory == null)
+                PasteFile();
         }
 
         /// <summary>
@@ -279,6 +310,43 @@ namespace ClassTerminal
         }
 
         /// <summary>
+        /// Paste all files from directory in buffer. 
+        /// </summary>
+        public void PasteDirectory()
+        {
+            foreach (var directory in this.bufferDirectory.GetDirectories())
+            {
+                this.currentDirectory.CreateSubdirectory(directory.Name);
+                CopyAllFilesFromDirectory(directory, directory.Name);
+            }
+            foreach (var file in this.bufferDirectory.GetFiles())
+            {
+                file.CopyTo(this.currentDirectory.FullName + file.Name, true);
+            }
+        }
+
+        /// <summary>
+        /// Copy all files and directories from directory to current directory. 
+        /// </summary>
+        /// <param name="directoryToCopy">DirectoryInfo wich needs to be copied.</param>
+        /// <param name="dirNames">All previous directory names.</param>
+        public void CopyAllFilesFromDirectory(DirectoryInfo directoryToCopy, string dirNames)
+        {
+            if (directoryToCopy.GetDirectories().Length != 0)
+            {
+                foreach (var directory in directoryToCopy.GetDirectories())
+                {
+                    DirectoryInfo newDirectory = new DirectoryInfo(this.currentDirectory.FullName + dirNames);
+                    newDirectory.CreateSubdirectory(directory.Name);
+                    CopyAllFilesFromDirectory(directory, dirNames + directory.Name);
+                }
+            }
+            foreach (var file in directoryToCopy.GetFiles())
+                file.CopyTo(this.currentDirectory.FullName + dirNames + '\\' + file.Name);
+
+        }
+
+        /// <summary>
         /// Delete file by filename. 
         /// </summary>
         /// <param name="filename">Name of the deliting file.</param>
@@ -294,6 +362,10 @@ namespace ClassTerminal
             PrintError("Incorrect filename");
         }
 
+        /// <summary>
+        /// Ask user to confirm his action. 
+        /// </summary>
+        /// <returns></returns>
         public bool AskYesNo()
         {
             Console.WriteLine("Are you sure? (y/n)");
@@ -351,6 +423,11 @@ namespace ClassTerminal
             }
         }
 
+        /// <summary>
+        /// Checks are all files correct. 
+        /// </summary>
+        /// <param name="fileNames">List with filenames to check.</param>
+        /// <returns>True if all files are correct, false otherwise.</return>returns>
         public bool CheckAllFiles(List<string> fileNames)
         {
             foreach (string fileName in fileNames)
