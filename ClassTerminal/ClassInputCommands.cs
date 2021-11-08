@@ -169,24 +169,28 @@ namespace ClassInputCommands
 
             if (matchedLines.Count == 1 && IsPartOfPathChecker(inputLine[inputLine.Count - 1]))
             {
-                inputLine[inputLine.Count - 1] = GetPartsOfPath(inputLine[inputLine.Count - 1]).Item1 + matchedLines[0];
-                if (hasQuotes)
+                if (IsFileChecker(matchedLines[0]))
+                    inputLine[inputLine.Count - 1] = GetPartsOfPath(inputLine[inputLine.Count - 1]).Item1 + matchedLines[0];
+                else
+                    inputLine[inputLine.Count - 1] = GetPartsOfPath(inputLine[inputLine.Count - 1]).Item1 + matchedLines[0] + "\\";
+                if (hasQuotes || inputLine[inputLine.Count - 1].Contains(' '))
                     inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
-                sb = new StringBuilder(ConcatStrings(inputLine) + "\\");
+                sb = new StringBuilder(ConcatStrings(inputLine));
                 return sb;
             }
             if (matchedLines.Count == 1)
                 inputLine[inputLine.Count - 1] = matchedLines[0];
             if (matchedLines.Count == 1 && !IsFileChecker(inputLine[inputLine.Count - 1]) && inputLine.Count > 1)
             {
-                if (hasQuotes)
+                inputLine[inputLine.Count - 1] += "\\";
+                if (hasQuotes || inputLine[inputLine.Count - 1].Contains(' '))
                     inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
-                sb = new StringBuilder(ConcatStrings(inputLine) + "\\");
+                sb = new StringBuilder(ConcatStrings(inputLine));
                 return sb;
             }
             if (matchedLines.Count == 1)
             {
-                if (hasQuotes)
+                if (hasQuotes || inputLine[inputLine.Count - 1].Contains(' '))
                     inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
                 sb = new StringBuilder(ConcatStrings(inputLine) + " ");
                 return sb;
