@@ -13,7 +13,7 @@ namespace ClassTerminal
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(path: "C:\\");
         //List of available comands.
-        List<string> commands = new List<string>(new string[] { "gd", "cd", "ls", "open", "copy", "cut", "paste", "delete", "create", "concat", "clear", "filesBy", "copyAll" });
+        List<string> commands = new List<string>(new string[] { "gd", "cd", "ls", "open", "copy", "cut", "paste", "delete", "create", "concat", "clear", "filesBy", "copyAll", "mkdir" });
         bool isDirectory = true;
         //Checks if cur pos is in Drives.
         FileInfo bufferFile = null;
@@ -167,7 +167,7 @@ namespace ClassTerminal
                 return;
             }
 
-            DirectoryInfo dir = new DirectoryInfo(this.currentDirectory.FullName + dirName);
+            DirectoryInfo dir = new DirectoryInfo(this.currentDirectory.FullName + "\\" + dirName);
             if (dir.Exists)
             {
                 this.currentDirectory = dir;
@@ -176,6 +176,10 @@ namespace ClassTerminal
             PrintError("There is no such directory");
         }
 
+        /// <summary>
+        /// Returns type of current position: is it directory or drives. 
+        /// </summary>
+        /// <returns>True if it is directory, false otherwise.</returns>
         public bool GetIsDirectory()
         {
             return this.isDirectory;
@@ -347,19 +351,57 @@ namespace ClassTerminal
         }
 
         /// <summary>
+        /// Delete ement by name. 
+        /// </summary>
+        /// <param name="elementName"></param>
+        public void DeleteElement(string elementName)
+        {
+            FileInfo fileInfo = new FileInfo(this.currentDirectory.FullName + elementName);
+            DirectoryInfo directoryInfo = new DirectoryInfo(this.currentDirectory.FullName + elementName);
+            if (fileInfo.Exists)
+            {
+                DeleteFile(fileInfo);
+                return;
+            }
+            if (directoryInfo.Exists)
+            {
+                DeleteDirectory(directoryInfo);
+                return;
+            }
+            PrintError("Incorrect name");
+        }
+
+        /// <summary>
         /// Delete file by filename. 
         /// </summary>
         /// <param name="filename">Name of the deliting file.</param>
-        public void DeleteFile(string filename)
+        public void DeleteFile(FileInfo fileInfo)
         {
-            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + filename);
-            if (fileInfo.Exists)
+            if (AskYesNo())
             {
                 fileInfo.Delete();
                 PrintSuccessMessage("File deleted");
-                return;
             }
-            PrintError("Incorrect filename");
+            return;
+        }
+
+        /// <summary>
+        /// Deletes directory if it's empty. 
+        /// </summary>
+        /// <param name="dirName">Directory name.</param>
+        public void DeleteDirectory(DirectoryInfo directory)
+        {
+            if (AskYesNo())
+            {
+                try
+                {
+                    directory.Delete();
+                }
+                catch (IOException)
+                {
+                    PrintError("Directory is not empty");
+                }
+            }
         }
 
         /// <summary>
@@ -378,9 +420,9 @@ namespace ClassTerminal
         /// <summary>
         /// Create text file and write some text there. User can choose one of the 3 encodings: UTF-8, ASCII, Unicode.
         /// </summary>
-        /// <param name="filename">Name of creating file.</param>
+        /// <param name="fileName">Name of creating file.</param>
         /// <param name="encoding">Choosed encoding.</param>
-        public void CreateTextFile(string filename, string encoding = "UTF-8")
+        public void CreateTextFile(string fileName, string encoding = "UTF-8")
         {
             Encoding encode;
             switch (encoding)
@@ -398,13 +440,54 @@ namespace ClassTerminal
                     PrintError("Incorrect encoding");
                     return;
             }
-            Console.WriteLine("Enter your text:");
-            string text = Console.ReadLine();
-            using (StreamWriter sw = new StreamWriter(File.Open(filename, FileMode.Create), encode))
-                sw.Write(text);
-            File.Move(Directory.GetCurrentDirectory() + "\\" + filename, this.currentDirectory.FullName + "\\" + filename);
+            FileInfo fileInfo = new FileInfo(this.currentDirectory + "\\" + fileName);
+            if (!fileInfo.Exists)
+            {
+                try
+                {
+                    fileInfo.Create().Dispose();
+                }
+                catch (IOException)
+                {
+                    PrintError("Incorrect file name");
+                }
+            }
+            else
+            {
+                PrintError("There is a file with same name");
+                return;
+            }
+            WriteToFile(fileName, encode);
             PrintSuccessMessage("File successfully created.");
 
+        }
+
+        public void WriteToFile(string fileName, Encoding encode)
+        {
+            Console.WriteLine("Enter your text:");
+            string text = Console.ReadLine();
+            using (StreamWriter sw = new StreamWriter(File.Open(this.currentDirectory.FullName + fileName, FileMode.Open), encode))
+                sw.Write(text);
+        }
+
+        /// <summary>
+        /// Creates new directory in current position. 
+        /// </summary>
+        /// <param name="dirName">Name of new directory.</param>
+        public void CreateDirectory(string dirName)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(this.currentDirectory.FullName + "\\" + dirName);
+            if (!dirInfo.Exists)
+            {
+                try
+                {
+                    dirInfo.Create();
+                }
+                catch (IOException)
+                {
+                    PrintError("Incorrect directory name");
+                }
+            }
         }
 
         /// <summary>

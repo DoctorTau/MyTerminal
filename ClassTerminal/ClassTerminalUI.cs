@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace ClassTerminal
 {
@@ -21,8 +19,9 @@ namespace ClassTerminal
             Console.WriteLine("copyAll - adds all files and directories to the buffer.\n");
             Console.WriteLine("cut {file} - adds file to the buffer and  deletes it after pasting.\n");
             Console.WriteLine("paste - paste file from the buffer. If type was cutting that file would stay in the buffer, otherwise buffer would be cleaned.\n");
-            Console.WriteLine("delete {file} - delete a file in current directory.\n");
+            Console.WriteLine("delete {file} - delete a file in current directory or delete empty directory.\n");
             Console.WriteLine("create {file} {encode} - creates a new file in choosed encode.  Default encoding is UTF-8.\n");
+            Console.WriteLine("mkdir {dir name} - creates a new directory.");
             Console.WriteLine("concat \"{file 1}\" \"{file 2}\" ... - concats 2 and more files into 1 and print it to the console.\n");
             Console.WriteLine("clear - clears the console.\n");
             Console.WriteLine("filesBy {*...} {depth}- prints file whith your mask. Default depth is 1.\n");

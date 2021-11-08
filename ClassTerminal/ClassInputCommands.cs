@@ -15,8 +15,9 @@ namespace ClassInputCommands
         {
 
             StringBuilder sb = new StringBuilder();
+            UpdateLine(sb, terminal);
             ConsoleKeyInfo inputKey;
-            int curPos = 0, historyPos = 0;
+            int curPos = terminal.GetCurrentDirectory().Length + 1, margin = curPos, historyPos = 0;
             string bufferForInput = "";
 
             inputKey = Console.ReadKey();
@@ -25,14 +26,14 @@ namespace ClassInputCommands
                 switch (inputKey.Key)
                 {
                     case ConsoleKey.RightArrow:
-                        if (curPos > sb.Length)
+                        if (curPos > sb.Length + margin)
                             break;
                         curPos++;
                         sb = new StringBuilder(sb.ToString() + " ");
                         Console.CursorLeft++;
                         break;
                     case ConsoleKey.LeftArrow:
-                        if (curPos == 0)
+                        if (curPos == margin)
                             break;
                         curPos--;
                         Console.CursorLeft--;
@@ -48,8 +49,8 @@ namespace ClassInputCommands
                         else
                             sb = new StringBuilder(lastCommands[historyPos]);
                         historyPos++;
-                        UpdateLine(sb);
-                        curPos = sb.Length;
+                        UpdateLine(sb, terminal);
+                        curPos = sb.Length + terminal.GetCurrentDirectory().Length + 1;
                         break;
                     case ConsoleKey.DownArrow:
                         if (historyPos == 0)
@@ -59,30 +60,30 @@ namespace ClassInputCommands
                         else
                             sb = new StringBuilder(lastCommands[historyPos - 2]);
                         historyPos--;
-                        UpdateLine(sb);
-                        curPos = sb.Length;
+                        UpdateLine(sb, terminal);
+                        curPos = sb.Length + terminal.GetCurrentDirectory().Length + 1;
                         break;
                     case ConsoleKey.Backspace:
-                        if (curPos == 0)
+                        if (curPos == margin)
                             break;
-                        sb.Remove(--curPos, 1);
-                        UpdateLine(sb);
+                        sb.Remove(--curPos - margin, 1);
+                        UpdateLine(sb, terminal);
                         break;
                     case ConsoleKey.Delete:
-                        if (curPos >= sb.Length)
+                        if (curPos >= sb.Length + margin)
                             break;
-                        sb.Remove(curPos, 1);
-                        UpdateLine(sb);
+                        sb.Remove(curPos - margin, 1);
+                        UpdateLine(sb, terminal);
                         break;
                     case ConsoleKey.Tab:
                         sb = AutoCompleteMethod(sb, terminal);
-                        UpdateLine(sb);
-                        curPos = sb.Length;
+                        UpdateLine(sb, terminal);
+                        curPos = sb.Length + terminal.GetCurrentDirectory().Length + 1;
                         Console.CursorLeft = curPos;
                         break;
                     default:
-                        sb.Insert(curPos++, inputKey.KeyChar);
-                        UpdateLine(sb);
+                        sb.Insert(curPos++ - margin, inputKey.KeyChar);
+                        UpdateLine(sb, terminal);
                         break;
                 }
                 Console.CursorLeft = curPos;
@@ -91,19 +92,35 @@ namespace ClassInputCommands
             lastCommands.Insert(0, sb.ToString());
             List<string> returnsList = new List<string>(CutQuotesInString(sb.ToString().TrimEnd()));
             returnsList = returnsList.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+            PrintCommand(sb.ToString());
             return returnsList;
+        }
+
+        private static void ClearLine()
+        {
+            Console.Write("\r");
+            Console.Write(new string(' ', Console.BufferWidth - 1));
+            Console.Write("\r");
+        }
+
+        private static void PrintCommand(string command)
+        {
+            ClearLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(command);
+            Console.ResetColor();
         }
 
         /// <summary>
         /// Clears input line and puts new text there. 
         /// </summary>
         /// <param name="sb">StringBuilder with new text.</param>
-        private static void UpdateLine(StringBuilder sb)
+        private static void UpdateLine(StringBuilder sb, Terminal terminal)
         {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            ClearLine();
+            Console.Write(terminal.GetCurrentDirectory() + ' ');
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\r");
-            Console.Write(new string(' ', Console.BufferWidth - 1));
-            Console.Write("\r");
             Console.Write(sb.ToString());
             Console.ResetColor();
         }

@@ -32,11 +32,10 @@ namespace MyTerminal
         {
             bool workFlag = true;
             Terminal terminal = new Terminal("C:\\");
-            // string input = Console.ReadLine();
+            Console.Clear();
             while (workFlag)
             {
                 List<string> inputCommands = InputCommands.InputComds(terminal);
-                Console.WriteLine(inputCommands[0]);
                 string command = inputCommands[0];
                 string encoding = null;
                 if (inputCommands.Count > 1)
@@ -88,10 +87,7 @@ namespace MyTerminal
                         break;
                     case "delete":
                         if (CheckCountOfArgumets(inputCommands, 1))
-                        {
-                            if (terminal.AskYesNo())
-                                terminal.DeleteFile(InputCommands.ConcatStrings(inputCommands));
-                        }
+                            terminal.DeleteElement(InputCommands.ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
@@ -114,6 +110,12 @@ namespace MyTerminal
                             else
                                 terminal.CreateTextFile(InputCommands.ConcatStrings(inputCommands));
                         }
+                        else
+                            terminal.PrintError("Invalid argument");
+                        break;
+                    case "mkdir":
+                        if (CheckCountOfArgumets(inputCommands, 1))
+                            terminal.CreateDirectory(InputCommands.ConcatStrings(inputCommands));
                         else
                             terminal.PrintError("Invalid argument");
                         break;
