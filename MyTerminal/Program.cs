@@ -64,7 +64,8 @@ namespace MyTerminal
                         terminal.PrintComandsInfo();
                         break;
                     case "gd":
-                        terminal.PrintSuccessMessage(terminal.GetCurrentDirectory());
+                        string curDrirectory = terminal.GetCurrentDirectory();
+                        terminal.PrintSuccessMessage(curDrirectory == "" ? "Your Computer" : curDrirectory);
                         break;
                     case "cd":
                         if (CheckCountOfArgumets(inputCommands, 1))

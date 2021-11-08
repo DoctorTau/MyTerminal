@@ -139,7 +139,7 @@ namespace ClassInputCommands
             }
             else if (inputLine.Count > 1 && IsPartOfPathChecker(inputLine[inputLine.Count - 1]))
             {
-                Tuple<string, string> pathOfPath = GetPartOfPath(inputLine[inputLine.Count - 1]);
+                Tuple<string, string> pathOfPath = GetPartsOfPath(inputLine[inputLine.Count - 1]);
                 matchedLines = GetMachedLines(pathOfPath.Item2, GetFileFromDirectory(terminal.GetCurrentDirectory() + pathOfPath.Item1));
             }
             else if (inputLine.Count > 1)
@@ -177,7 +177,7 @@ namespace ClassInputCommands
 
             if (matchedLines.Count == 1 && IsPartOfPathChecker(inputLine[inputLine.Count - 1]))
             {
-                inputLine[inputLine.Count - 1] = GetPartOfPath(inputLine[inputLine.Count - 1]).Item1 + matchedLines[0];
+                inputLine[inputLine.Count - 1] = GetPartsOfPath(inputLine[inputLine.Count - 1]).Item1 + matchedLines[0];
                 if (hasQuotes)
                     inputLine[inputLine.Count - 1] = '"' + inputLine[inputLine.Count - 1] + '"';
                 sb = new StringBuilder(ConcatStrings(inputLine) + "\\");
@@ -308,7 +308,7 @@ namespace ClassInputCommands
         /// </summary>
         /// <param name="partOfPath">Part of path to cut.</param>
         /// <returns>Part of correct path.</returns>
-        private static Tuple<string, string> GetPartOfPath(string partOfPath)
+        private static Tuple<string, string> GetPartsOfPath(string partOfPath)
         {
             string[] pathInMas = partOfPath.Split('\\');
             string path = "";

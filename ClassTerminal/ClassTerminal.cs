@@ -43,7 +43,7 @@ namespace ClassTerminal
             }
             else
             {
-                return ("Your Computer.");
+                return ("");
             }
         }
 
@@ -108,7 +108,7 @@ namespace ClassTerminal
             List<string> drives = new List<string>();
             foreach (var driveInfo in DriveInfo.GetDrives())
             {
-                drives.Add(driveInfo.Name);
+                drives.Add(driveInfo.Name.TrimEnd('\\'));
             }
             return drives;
         }
@@ -145,6 +145,17 @@ namespace ClassTerminal
                 this.currentDirectory = this.currentDirectory.Parent;
                 return;
             }
+            // If line is a full path change current directory to it.
+            if (Path.IsPathRooted(dirName))
+            {
+                DirectoryInfo absPath = new DirectoryInfo(path: dirName);
+                if (absPath.Exists)
+                {
+                    this.currentDirectory = absPath;
+                    this.isDirectory = true;
+                    return;
+                }
+            }
             //Go to drive.
             if (!this.isDirectory)
             {
@@ -157,15 +168,7 @@ namespace ClassTerminal
                 PrintError("Incorect drive name.");
                 return;
             }
-            if (Path.IsPathRooted(dirName))
-            {
-                DirectoryInfo absPath = new DirectoryInfo(path: dirName);
-                if (absPath.Exists)
-                {
-                    this.currentDirectory = absPath;
-                    return;
-                }
-            }
+
             DirectoryInfo dir = new DirectoryInfo(this.currentDirectory.FullName + dirName);
             if (dir.Exists)
             {
