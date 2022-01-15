@@ -36,11 +36,13 @@ namespace MyTerminal
             while (workFlag)
             {
                 List<string> inputCommands = InputCommands.InputComds(terminal);
+                if (inputCommands.Count == 0)
+                    continue;
                 string command = inputCommands[0];
                 string encoding = null;
                 if (inputCommands.Count > 1)
                     inputCommands.RemoveAt(0);
-                if ((inputCommands.Count > 1) && terminal.CheckEncoding(inputCommands[inputCommands.Count - 1]) == true)
+                if ((inputCommands.Count > 1) && terminal.CheckEncoding(inputCommands[inputCommands.Count - 1]))
                 {
                     encoding = inputCommands[inputCommands.Count - 1];
                     inputCommands.RemoveAt(inputCommands.Count - 1);
@@ -149,7 +151,6 @@ namespace MyTerminal
                         terminal.PrintError("Unkcown command");
                         break;
                 }
-                // input = Console.ReadLine();
             }
             Console.ForegroundColor = ConsoleColor.White;
         }

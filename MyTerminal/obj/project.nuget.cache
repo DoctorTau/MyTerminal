@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "thme62vtpqIGoNJSrJkRrX8kwyvHvWTJYbJItdwGWFuMhpWaYRoef3HuikXnUmilZePodVXgkqy2cW1bQ15DfQ==",
+  "dgSpecHash": "Rl8o2Ivng5XeunqB11ZSMqT8v44wnP16AJZMGwB2A90SQL715nABIfERMVnEy+4a/allbH5JRBdxVGX7/riOMQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\drtta\\Google Диск\\programming\\HSE\\C#\\TerminalPeer\\MyTerminal\\MyTerminal.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\drtta\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.12\\microsoft.netcore.app.host.win-x64.5.0.12.nupkg.sha512"
+  ],
   "logs": []
 }
